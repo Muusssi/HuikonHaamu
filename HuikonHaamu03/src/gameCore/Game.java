@@ -19,5 +19,6 @@ public class Game {
 	public void startGame(GameWorld gameWorld) {
 		gameWorld.game = this;
 		HC.HCinit(gameWorld.language);
+		gameWorld.player.location = gameWorld.startingRoom;
 	}
 }

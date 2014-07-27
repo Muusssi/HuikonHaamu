@@ -10,7 +10,7 @@ public abstract class GameThing {
 	protected String code;
 	protected GameWorld gw;
 	
-	public String codePrefix = "o";
+	public String codePrefix;
 	
 	
 	public GameThing(GameWorld gw, String name, String description, String code) 
@@ -34,10 +34,10 @@ public abstract class GameThing {
 	public void giveNewCode(String code) throws IllegalGameCodeException {
 		if (code == null) { //New code
 			int codeCount = 1;
-			while (gw.gameThings.containsKey(this.codePrefix+Integer.toString(codeCount))) {
+			while (gw.gameThings.containsKey(this.getCodePrefix()+Integer.toString(codeCount))) {
 				codeCount++;
 			}
-			this.code = this.codePrefix+Integer.toString(codeCount);
+			this.code = this.getCodePrefix()+Integer.toString(codeCount);
 		}
 		else {
 			if (gw.gameThings.containsKey(code)) {
@@ -57,6 +57,7 @@ public abstract class GameThing {
 	/**Returns the String line that can be used to save and later recreate the GameThing.*/
 	public abstract String getSaveline();
 	
+	public abstract String getCodePrefix();
 	
 	/* The player actions: */
 	

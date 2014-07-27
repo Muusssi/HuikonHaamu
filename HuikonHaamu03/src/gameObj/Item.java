@@ -3,15 +3,12 @@ package gameObj;
 import gameCore.GameWorld;
 import gameExceptions.IllegalGameCodeException;
 
-public class Player extends GameThing {
-	
-	public Room location;
-	
-	public Player(GameWorld gw, String name, String description)
+public class Item extends GameThing {
+
+	public Item(GameWorld gw, String name, String description, String code)
 			throws IllegalGameCodeException {
-		super(gw, name, description, "p0");
-		this.location = this.gw.startingRoom;
-		gw.player = this;
+		super(gw, name, description, code);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -28,7 +25,7 @@ public class Player extends GameThing {
 	
 	@Override
 	public String getCodePrefix() {
-		return "player";
+		return "i";
 	}
 
 	@Override

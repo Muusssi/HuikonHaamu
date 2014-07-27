@@ -1,11 +1,16 @@
 package gameObj;
 
+import java.util.HashMap;
+
 import gameCore.GameWorld;
 import gameExceptions.IllegalGameCodeException;
 
 public class Room extends GameThing {
 	
+	public String codePrefix = "r";
+	
 	protected Door[] doors;
+	public HashMap<String,Item> roomItems = new HashMap<String,Item>();
 
 	public Room(GameWorld gw, String name, String description, String code)
 				throws IllegalGameCodeException {
@@ -14,10 +19,30 @@ public class Room extends GameThing {
 			this.setAsStartingRoom();
 		}
 		
-		doors = new Door[32]; // Eight possible on each side starting from left North
+		doors = new Door[28]; // 
+		/* Doors:
+		 * Seven possible positions on each side starting from left North
+		 *    0  1  2  3  4  5  6 
+		 * 27                     7
+		 * 26                     8
+		 * 25                     9
+		 * 24                     10
+		 * 23                     11
+		 * 22                     12
+		 * 21                     13
+		 *    20 19 18 17 16 15 14
+		 */
 		
-		this.codePrefix = "r";
 		this.gw.rooms.put(this.code, this);
+	}
+	
+	public void addDoor(Door newDoor, int position) {
+		if (doors[position] == null) {
+			doors[position] = newDoor;
+		}
+		else {
+			//TODO
+		}
 	}
 	
 	public void setAsStartingRoom() {
@@ -52,6 +77,11 @@ public class Room extends GameThing {
 			gw.rooms.put(newCode, this);
 		}
 		
+	}
+	
+	@Override
+	public String getCodePrefix() {
+		return "r";
 	}
 
 	@Override
