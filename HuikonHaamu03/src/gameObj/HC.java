@@ -19,6 +19,15 @@ public class HC {
 	//Room
 		public static String ROOM_DESCRIPTION;
 	
+	//Door
+		public static String DOOR_DESCRIPTION;
+		public static String DOOR_GO;
+		public static String DOOR_OPEN_CLOSED;
+		public static String DOOR_OPEN_OPENED;
+		public static String DOOR_CLOSE_CLOSED;
+		public static String DOOR_CLOSE_OPENED;
+		public static String DOOR_GO_CLOSED;
+		public static String DOOR_GO_OPENED;
 	
 	public static void HCinit(String lan) {
 		lang = lan;
@@ -32,9 +41,17 @@ public class HC {
 			GAMETHING_GO = "You can't go in there.";
 			GAMETHING_HIT = "Don't be so aggressive. You had no reason for hitting that thing.";
 			
-			//Room
+			// Room
 			ROOM_DESCRIPTION = "This just an ordinary room.";
 			
+			// Door
+			DOOR_DESCRIPTION = "This just an ordinary door.";
+			DOOR_OPEN_CLOSED = "You open the door.";
+			DOOR_OPEN_OPENED = "This door is already open.";
+			DOOR_CLOSE_CLOSED = "This door is already closed.";
+			DOOR_CLOSE_OPENED = "You close the door.";
+			DOOR_GO_CLOSED = "This door is closed.";
+			DOOR_GO_OPENED = "You go through the door.";
 		}
 	}
 	

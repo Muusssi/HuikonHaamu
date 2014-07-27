@@ -9,7 +9,7 @@ public class GameWorld {
 	protected String name;
 	public String language;
 	public Game game = null;
-	
+	public Player player;
 	
 	public HashMap<String,GameThing> gameThings = new HashMap<String,GameThing>();
 	public HashMap<String,GameThing> thingsInVoid = new HashMap<String,GameThing>();
