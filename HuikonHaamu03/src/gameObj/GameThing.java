@@ -57,6 +57,7 @@ public abstract class GameThing {
 	/**Returns the String line that can be used to save and later recreate the GameThing.*/
 	public abstract String getSaveline();
 	
+	/**Returns the appropriate gameCodePrefix for the class that the GameThing is an instance of.*/
 	public abstract String getCodePrefix();
 	
 	/* The player actions: */
@@ -87,6 +88,10 @@ public abstract class GameThing {
 	
 	public void hit() {
 		gw.game.actionResponse(HC.GAMETHING_HIT);
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 }

@@ -49,15 +49,18 @@ public class CmdlineUI {
 		while (itr.hasNext()) {
 			System.out.println(itr.next());
 		}
-		System.out.println("------------");
+		
 		
 		
 		while (running) {
+			Room currentRoom = gw.player.location;
+			System.out.println(currentRoom.getName() + ":-----------------------");
+			currentRoom.printAvailableGameThings();
 			command = sc.nextLine();
 			//command
 			if (command.startsWith("go ")) {
 				code = command.substring(3);
-				gw.gameThings.get(code).go();
+				gw.player.getAvailableGameThings().get(code).go();
 				
 			}
 			

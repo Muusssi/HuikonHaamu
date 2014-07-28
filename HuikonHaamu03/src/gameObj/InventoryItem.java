@@ -3,14 +3,14 @@ package gameObj;
 import gameCore.GameWorld;
 import gameExceptions.IllegalGameCodeException;
 
-public class Item extends GameThing {
+public class InventoryItem extends Item {
 
-	public Item(GameWorld gw, String name, String description, String code)
-			throws IllegalGameCodeException {
+	public InventoryItem(GameWorld gw, String name, String description,
+			String code) throws IllegalGameCodeException {
 		super(gw, name, description, code);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
 	public void giveDescription(String description) {
 		// TODO Auto-generated method stub
@@ -25,7 +25,7 @@ public class Item extends GameThing {
 	
 	@Override
 	public String getCodePrefix() {
-		return "I";
+		return "i";
 	}
 
 	@Override
@@ -33,5 +33,4 @@ public class Item extends GameThing {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

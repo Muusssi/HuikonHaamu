@@ -1,6 +1,8 @@
 package gameObj;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import gameCore.GameWorld;
 import gameExceptions.IllegalGameCodeException;
@@ -10,11 +12,13 @@ public class Room extends GameThing {
 	public String codePrefix = "r";
 	
 	protected Door[] doors;
-	public HashMap<String,Item> roomItems = new HashMap<String,Item>();
+	public HashMap<String,Door> doorsMap = new HashMap<String,Door>();
+	public HashMap<String,GameThing> roomItems = new HashMap<String,GameThing>();
 
 	public Room(GameWorld gw, String name, String description, String code)
 				throws IllegalGameCodeException {
 		super(gw, name, description, code);
+		roomItems.put(this.code, this);
 		if(gw.startingRoom == null) {
 			this.setAsStartingRoom();
 		}
@@ -39,6 +43,7 @@ public class Room extends GameThing {
 	public void addDoor(Door newDoor, int position) {
 		if (doors[position] == null) {
 			doors[position] = newDoor;
+			doorsMap.put(newDoor.code, newDoor);
 		}
 		else {
 			//TODO
@@ -94,5 +99,38 @@ public class Room extends GameThing {
 		// TODO implement
 		return null;
 	}
-
+	
+	public Iterator<GameThing> getRoomThings() {
+		Collection<GameThing> collection = roomItems.values();
+		return collection.iterator();
+	}
+	
+	public void printAvailableGameThings() {
+		int doorIndex = 0;
+		while (doorIndex < 28) {
+			//Directions
+			if (doorIndex == 0) {
+				System.out.print("North: ");
+			}
+			else if (doorIndex == 7) {
+				System.out.println();
+				System.out.print("East: ");
+			}
+			else if (doorIndex == 14) {
+				System.out.println();
+				System.out.print("South: ");
+			}
+			else if (doorIndex == 21) {
+				System.out.println();
+				System.out.print("West: ");
+			}
+			//Doors
+			if (this.doors[doorIndex] != null) {
+				System.out.print(this.doors[doorIndex].code +":" +this.doors[doorIndex].name+", " );
+			}
+			doorIndex++;
+		}
+		System.out.println();
+	}
+	
 }
