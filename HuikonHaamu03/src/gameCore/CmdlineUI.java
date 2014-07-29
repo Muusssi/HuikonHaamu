@@ -1,5 +1,6 @@
 package gameCore;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
@@ -41,28 +42,62 @@ public class CmdlineUI {
 		
 		Scanner sc = new Scanner(System.in);
 		boolean running = true;
-		String command = "";
+		String[] command;
 		String code = "";
 		
+		/*
 		Set<String> setti = gw.gameThings.keySet();
 		Iterator<String> itr = setti.iterator();
 		while (itr.hasNext()) {
 			System.out.println(itr.next());
 		}
-		
+		*/
 		
 		
 		while (running) {
+			
 			Room currentRoom = gw.player.location;
 			System.out.println(currentRoom.getName() + ":-----------------------");
 			currentRoom.printAvailableGameThings();
-			command = sc.nextLine();
-			//command
-			if (command.startsWith("go ")) {
-				code = command.substring(3);
-				gw.player.getAvailableGameThings().get(code).go();
-				
+			HashMap<String,GameThing> available = gw.player.getAvailableGameThings();
+			command = sc.nextLine().split(" ");
+			System.out.println("--------------------------------------");
+			System.out.print("-->");
+			
+			if (command.length != 2) {
+				System.out.println(HC.SYNTAX_ERROR);
 			}
+			else if (available.containsKey(command[1])) {
+				//action
+				code = command[1];
+				if (command[0].equals(HC.GO)) {
+					gw.player.getAvailableGameThings().get(code).go();
+				}
+				else if (command[0].equals(HC.OPEN)) {
+					gw.player.getAvailableGameThings().get(code).open();
+				}
+				else if (command[0].equals(HC.CLOSE)) {
+					gw.player.getAvailableGameThings().get(code).close();
+				}
+				else if (command[0].equals(HC.TAKE)) {
+					gw.player.getAvailableGameThings().get(code).take();
+				}
+				else if (command[0].equals(HC.LOOK)) {
+					gw.player.getAvailableGameThings().get(code).explore();
+				}
+				else if (command[0].equals(HC.HIT)) {
+					gw.player.getAvailableGameThings().get(code).hit();
+				}
+				else {
+					System.out.println(HC.UNKNOWN_ACTION);
+				}
+			}
+			else {
+				System.out.println(HC.UNKNOWN_CODE);
+			}
+			
+			
+			
 			
 			
 		}

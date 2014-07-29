@@ -131,6 +131,17 @@ public class Room extends GameThing {
 			doorIndex++;
 		}
 		System.out.println();
+		
+		//Other things
+		System.out.print("   Items:\r");
+		Iterator<GameThing> itr = this.getRoomThings();
+		GameThing currentThing;
+		while (itr.hasNext()) {
+			currentThing = itr.next();
+			System.out.print(currentThing.code+":"+currentThing.name+", ");
+		}
+		System.out.println();
+		
 	}
 	
 }

@@ -21,9 +21,12 @@ public class GameWorld {
 	public GameWorld(String name, String language) {
 		this.name = name;
 		this.language = language;
+		HC.HCinit(language);
 	}
 	
 	
+	
+	/** Method for checking that every room can be accessed from the starting room.*/
 	public boolean roomsConnected() {
 		//TODO Check that every room can be accessed from the starting room.
 		return true;
