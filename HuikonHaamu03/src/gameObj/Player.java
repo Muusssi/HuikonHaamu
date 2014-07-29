@@ -44,7 +44,7 @@ public class Player extends GameThing {
 		HashMap<String,GameThing> interactables = new HashMap<String,GameThing>();
 		interactables.putAll(this.inventory);
 		interactables.putAll(this.location.roomItems);
-		interactables.putAll(this.location.doorsMap);
+		interactables.putAll(this.location.doorMap);
 		return interactables;
 	}
 	

@@ -1,27 +1,31 @@
 package gameObj;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
+import gameExceptions.WorldMakingConflict;
+
 
 public class Door extends GameThing {
 	
-	public String codePrefix = "d";
-	
 	public Room firstRoom;
+	private int firstRoomPosition;
 	public Room secondRoom;
+	private int secondRoomPosition;
 	public boolean closed;
-	
-	
-	public Door(GameWorld gw, String name, String description, String code, Room firstRoom, int firsRoomPosition,
+
+	/**Door is a passage from one room to another.*/
+	public Door(GameWorld gw, String name, String description, String code, Room firstRoom, int firstRoomPosition,
 				Room secondRoom, int secondRoomPosition, boolean closed)
-						throws IllegalGameCodeException {
+						throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code);
 		this.firstRoom = firstRoom;
-		firstRoom.addDoor(this, firsRoomPosition);
+		firstRoom.addDoor(this, firstRoomPosition);
+		this.firstRoomPosition =  firstRoomPosition;
 		this.secondRoom = secondRoom;
 		secondRoom.addDoor(this, secondRoomPosition);
+		this.secondRoomPosition =  secondRoomPosition;
 		this.closed = closed;
-		
 		
 	}
 	
@@ -85,13 +89,35 @@ public class Door extends GameThing {
 	
 	@Override
 	public String getSaveline() {
-		// TODO Auto-generated method stub
-		return null;
+		/* Door::<name>::<code>::<description>::
+		 * <firstRoomCode>::<positionInFirstRoom>::
+		 * <secondRoomCode>::<positionInSecondRoom>::
+		 * <closed>*/
+		return "Door::"+this.name+"::"+this.code+"::"+this.description+"::"
+				+this.firstRoom.code+"::"+Integer.toString(this.firstRoomPosition)+"::"
+				+this.secondRoom.code+"::"+Integer.toString(this.secondRoomPosition)+"::"+
+				this.closed+"\r";
 	}
 	
-	public static Room loadLine(String saveline) {
-		// TODO implement
-		return null;
+	/** Function for recreating a Door object from the line of text used to save it.*/
+	public static Door loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Door::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Door newDoor;
+			try {
+				newDoor = new Door(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
+						gw.rooms.get(saveLineComp[4]), Integer.parseInt(saveLineComp[5]),
+						gw.rooms.get(saveLineComp[6]), Integer.parseInt(saveLineComp[7]),
+						Boolean.getBoolean(saveLineComp[8]));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+			}
+			return newDoor;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
 	}
 
 }

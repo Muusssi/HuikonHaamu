@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
+import gameExceptions.WorldMakingConflict;
 
 public class Room extends GameThing {
 	
-	public String codePrefix = "r";
-	
 	protected Door[] doors;
-	public HashMap<String,Door> doorsMap = new HashMap<String,Door>();
+	public HashMap<String,Door> doorMap = new HashMap<String,Door>();
 	public HashMap<String,GameThing> roomItems = new HashMap<String,GameThing>();
 
 	public Room(GameWorld gw, String name, String description, String code)
@@ -40,16 +40,18 @@ public class Room extends GameThing {
 		this.gw.rooms.put(this.code, this);
 	}
 	
-	public void addDoor(Door newDoor, int position) {
+	/**Tries to add a Door to the given position.*/
+	public void addDoor(Door newDoor, int position) throws WorldMakingConflict {
 		if (doors[position] == null) {
 			doors[position] = newDoor;
-			doorsMap.put(newDoor.code, newDoor);
+			doorMap.put(newDoor.code, newDoor);
 		}
 		else {
-			//TODO
+			throw new WorldMakingConflict("Passage position taken");
 		}
 	}
 	
+	/**Sets the room as the GameWorlds starting room */
 	public void setAsStartingRoom() {
 		gw.startingRoom = this;
 		if (gw.player != null) {
@@ -81,7 +83,6 @@ public class Room extends GameThing {
 			gw.gameThings.put(newCode, this);
 			gw.rooms.put(newCode, this);
 		}
-		
 	}
 	
 	@Override
@@ -91,20 +92,38 @@ public class Room extends GameThing {
 
 	@Override
 	public String getSaveline() {
-		// TODO Auto-generated method stub
-		return null;
+		// Room::<name>::<code>::<description>
+		return "Room::"+this.name+"::"+this.code+"::"+this.description+"\r";
 	}
 	
-	public static Room loadLine(String saveline) {
-		// TODO implement
-		return null;
+	/** Function for recreating a Room object from the line of text used to save it.*/
+	public static Room loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Room::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Room newRoom;
+			try {
+				newRoom = new Room(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2]);
+			} catch (IllegalGameCodeException e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+				
+			}
+			return newRoom;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
 	}
 	
+	/**Returns the iterator for the GameObjects in the room.
+	 * Currently: excluding doors*/
 	public Iterator<GameThing> getRoomThings() {
 		Collection<GameThing> collection = roomItems.values();
 		return collection.iterator();
 	}
 	
+	/**Method for cmdLineUIs. Prints the doors of the room according to directions and
+	 * lists all GameThings in the room.*/
 	public void printAvailableGameThings() {
 		int doorIndex = 0;
 		while (doorIndex < 28) {
@@ -141,7 +160,6 @@ public class Room extends GameThing {
 			System.out.print(currentThing.code+":"+currentThing.name+", ");
 		}
 		System.out.println();
-		
 	}
 	
 }

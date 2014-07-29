@@ -33,7 +33,7 @@ public class CmdlineUI {
 			
 			Player pl = new Player(gw, "ovi1", null);
 			
-		} catch (IllegalGameCodeException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -1,6 +1,7 @@
 package gameObj;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
 
 public class Item extends GameThing {
@@ -30,8 +31,26 @@ public class Item extends GameThing {
 
 	@Override
 	public String getSaveline() {
-		// TODO Auto-generated method stub
-		return null;
+		/* Item::<name>::<code>::<description>::*/
+		return "Door::"+this.name+"::"+this.code+"::"+this.description+"\r";
+	}
+	
+	/** Function for recreating an Item from the line of text used to save it.*/
+	public static Item loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Item::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Item newItem;
+			try {
+				newItem = new Item(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+			}
+			return newItem;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
 	}
 
 }
