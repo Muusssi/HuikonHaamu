@@ -6,32 +6,36 @@ import gameExceptions.IllegalGameCodeException;
 import gameExceptions.WorldMakingConflict;
 
 
-public class Door extends GameThing {
+public class Door extends GameObject {
 	
-	public Room firstRoom;
-	private int firstRoomPosition;
-	public Room secondRoom;
-	private int secondRoomPosition;
-	public boolean closed;
+	public Passage passage;
+	public boolean linked = false;
 
-	/**Door is a passage from one room to another.*/
-	public Door(GameWorld gw, String name, String description, String code, Room firstRoom, int firstRoomPosition,
-				Room secondRoom, int secondRoomPosition, boolean closed)
+	/**Door is a link to a passage from one room to another.*/
+	public Door(GameWorld gw, String name, String description, String code,
+				Room location, int position)
 						throws IllegalGameCodeException, WorldMakingConflict {
-		super(gw, name, description, code);
-		this.firstRoom = firstRoom;
-		firstRoom.addDoor(this, firstRoomPosition);
-		this.firstRoomPosition =  firstRoomPosition;
-		this.secondRoom = secondRoom;
-		secondRoom.addDoor(this, secondRoomPosition);
-		this.secondRoomPosition =  secondRoomPosition;
-		this.closed = closed;
+		super(gw, name, description, code, location, position);
 		
 	}
 	
+	public void linkTo(Door otherDoor, boolean closed) throws WorldMakingConflict {
+		if (this.linked || otherDoor.linked) {
+			throw new WorldMakingConflict("Door already linked.");
+		}
+		else {
+			try {
+				new Passage(gw, "passage", null, null, this, otherDoor, closed);
+			} catch (IllegalGameCodeException e) {
+				e.printStackTrace();
+				//This shouldn't happen...
+			}
+		}
+	}
+	
 	public void open() {
-		if (this.closed) {
-			this.closed = false;
+		if (this.passage.closed) {
+			this.passage.closed = false;
 			gw.game.actionResponse(HC.DOOR_OPEN_CLOSED);
 		}
 		else {
@@ -40,25 +44,25 @@ public class Door extends GameThing {
 	}
 	
 	public void close() {
-		if (this.closed) {
+		if (this.passage.closed) {
 			gw.game.actionResponse(HC.DOOR_CLOSE_CLOSED);
 		}
 		else {
-			this.closed = true;
+			this.passage.closed = true;
 			gw.game.actionResponse(HC.DOOR_CLOSE_OPENED);
 		}
 	}
 	
 	public void go() {
-		if (this.closed) {
+		if (this.passage.closed) {
 			gw.game.actionResponse(HC.DOOR_GO_CLOSED);
 		}
 		else {
-			if (gw.player.location == this.firstRoom) {
-				gw.player.location = this.secondRoom;
+			if (gw.player.location == this.passage.room1) {
+				gw.player.location = this.passage.room2;
 			}
-			else if (gw.player.location == this.secondRoom) {
-				gw.player.location = this.firstRoom;
+			else if (gw.player.location == this.passage.room2) {
+				gw.player.location = this.passage.room1;
 			}
 			gw.game.actionResponse(HC.DOOR_GO_OPENED);
 		}
@@ -88,15 +92,19 @@ public class Door extends GameThing {
 	}
 	
 	@Override
-	public String getSaveline() {
+	public String getSaveline() { //TODO
 		/* Door::<name>::<code>::<description>::
 		 * <firstRoomCode>::<positionInFirstRoom>::
 		 * <secondRoomCode>::<positionInSecondRoom>::
 		 * <closed>*/
+		
+		/*
 		return "Door::"+this.name+"::"+this.code+"::"+this.description+"::"
 				+this.firstRoom.code+"::"+Integer.toString(this.firstRoomPosition)+"::"
 				+this.secondRoom.code+"::"+Integer.toString(this.secondRoomPosition)+"::"+
 				this.closed+"\r";
+		*/
+		return null;
 	}
 	
 	/** Function for recreating a Door object from the line of text used to save it.*/
@@ -105,15 +113,12 @@ public class Door extends GameThing {
 			String[] saveLineComp = saveLine.split("::");
 			Door newDoor;
 			try {
-				newDoor = new Door(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
-						gw.rooms.get(saveLineComp[4]), Integer.parseInt(saveLineComp[5]),
-						gw.rooms.get(saveLineComp[6]), Integer.parseInt(saveLineComp[7]),
-						Boolean.getBoolean(saveLineComp[8]));
+				//TODO
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new CorruptedSaveLineException(saveLine);
 			}
-			return newDoor;
+			return null;
 		}
 		else {
 			throw new CorruptedSaveLineException(saveLine);

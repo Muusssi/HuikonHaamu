@@ -9,45 +9,54 @@ import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
 import gameExceptions.WorldMakingConflict;
 
+	
 public class Room extends GameThing {
 	
-	protected Door[] doors;
-	public HashMap<String,Door> doorMap = new HashMap<String,Door>();
-	public HashMap<String,GameThing> roomItems = new HashMap<String,GameThing>();
-
-	public Room(GameWorld gw, String name, String description, String code)
-				throws IllegalGameCodeException {
+	/*Positions (0-76): if dim=7x7
+	 * Seven possible positions on each side starting from left North
+	 *    0  1  2  3  4  5  6 
+	 * 27 28 29 30 31 32 33 34 7
+	 * 26 35 36 37 38 39 40 41 8
+	 * 25 42 43 44 45 46 47 48 9
+	 * 24 49 50 51 52 53 54 55 10
+	 * 23 56 57 58 59 60 61 62 11
+	 * 22 63 64 65 66 67 68 69 12
+	 * 21 70 71 72 73 74 75 76 13
+	 *    20 19 18 17 16 15 14 
+	 *    */
+	
+	protected int xdim;
+	protected int ydim;
+	protected int wallOffset;
+	protected GameObject[] objectArray;
+	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
+	
+	
+	public Room(GameWorld gw, String name, String description, String code, int xdim, int ydim)
+				throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code);
-		roomItems.put(this.code, this);
+		if ((3 > xdim && xdim > 7) && (3 > ydim && ydim > 7)) {
+			throw new WorldMakingConflict("New room dimensions out of range.");
+		}
+		this.xdim = xdim;
+		this.ydim = ydim;
+		wallOffset = 2*(xdim+ydim);
+		objectArray = new GameObject[xdim*ydim + 2*(xdim+ydim)];
+		
+		this.gw.rooms.put(this.code, this);
 		if(gw.startingRoom == null) {
 			this.setAsStartingRoom();
 		}
-		
-		doors = new Door[28]; // 
-		/* Doors:
-		 * Seven possible positions on each side starting from left North
-		 *    0  1  2  3  4  5  6 
-		 * 27                     7
-		 * 26                     8
-		 * 25                     9
-		 * 24                     10
-		 * 23                     11
-		 * 22                     12
-		 * 21                     13
-		 *    20 19 18 17 16 15 14
-		 */
-		
-		this.gw.rooms.put(this.code, this);
 	}
 	
-	/**Tries to add a Door to the given position.*/
-	public void addDoor(Door newDoor, int position) throws WorldMakingConflict {
-		if (doors[position] == null) {
-			doors[position] = newDoor;
-			doorMap.put(newDoor.code, newDoor);
+	/**Tries to add a GameObject to the given position.*/
+	public void putObject(GameObject newGameObject, int position) throws WorldMakingConflict {
+		if (objectArray[position] == null) {
+			objectArray[position] = newGameObject;
+			objectMap.put(newGameObject.code, newGameObject);
 		}
 		else {
-			throw new WorldMakingConflict("Passage position taken");
+			throw new WorldMakingConflict("Object position "+Integer.toString(position)+" already taken.");
 		}
 	}
 	
@@ -85,6 +94,11 @@ public class Room extends GameThing {
 		}
 	}
 	
+	/**Tries to change the rooms dimensions. TODO not implemented!*/
+	public void changeDimensions(int newXdim, int newYdim) {
+		
+	}
+	
 	@Override
 	public String getCodePrefix() {
 		return "r";
@@ -92,22 +106,30 @@ public class Room extends GameThing {
 
 	@Override
 	public String getSaveline() {
-		// Room::<name>::<code>::<description>
-		return "Room::"+this.name+"::"+this.code+"::"+this.description+"\r";
+				// Room::<name>::<code>::<description>::
+				// <xdim>::<ydim>
+		return "Room::"+this.name+"::"+this.code+"::"+this.description+"::"
+				+Integer.toString(this.xdim)+"::"+Integer.toString(this.ydim)+"\r";
 	}
 	
-	/** Function for recreating a Room object from the line of text used to save it.*/
-	public static Room loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+	/** Function for recreating a Room object from the line of text used to save it.
+	 * @throws WorldMakingConflict 
+	 * @throws NumberFormatException */
+	public static Room loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException, NumberFormatException, WorldMakingConflict {
 		if (saveLine.startsWith("Room::")) {
 			String[] saveLineComp = saveLine.split("::");
 			Room newRoom;
 			try {
-				newRoom = new Room(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2]);
+				newRoom = new Room(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
+									Integer.parseInt(saveLineComp[4]), Integer.parseInt(saveLineComp[5]));
 			} catch (IllegalGameCodeException e) {
 				e.printStackTrace();
 				throw new CorruptedSaveLineException(saveLine);
-				
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
 			}
+			
 			return newRoom;
 		}
 		else {
@@ -115,51 +137,80 @@ public class Room extends GameThing {
 		}
 	}
 	
-	/**Returns the iterator for the GameObjects in the room.
-	 * Currently: excluding doors*/
-	public Iterator<GameThing> getRoomThings() {
-		Collection<GameThing> collection = roomItems.values();
+	/**Returns the iterator for the GameObjects in the room.*/
+	public Iterator<GameObject> getRoomThings() {
+		Collection<GameObject> collection = objectMap.values();
 		return collection.iterator();
 	}
 	
-	/**Method for cmdLineUIs. Prints the doors of the room according to directions and
-	 * lists all GameThings in the room.*/
-	public void printAvailableGameThings() {
-		int doorIndex = 0;
-		while (doorIndex < 28) {
-			//Directions
-			if (doorIndex == 0) {
-				System.out.print("North: ");
+	/**Method for cmdLineUIs. Prints the view of the room in text based manner.
+	 * This is magic!*/
+	public void printRoom() {
+		/* RoomName---------------------
+		 * 
+		 * #----------------------#
+		 * |                      |
+		 * |                      |
+		 * |                      |
+		 * |                      |
+		 * |                      |
+		 * #----------------------#
+		 * 
+		 * */
+
+		System.out.print("#---");
+		for (int i=0;i<this.objectArray.length;i++) {
+			if (i < this.xdim) {
+				if (this.objectArray[i] != null) {
+					System.out.print(this.objectArray[i].tdc()+"-");
+				}
+				else {
+					System.out.print("----");
+				}
+				if (i == xdim-1) {
+					System.out.println("#");
+				}
 			}
-			else if (doorIndex == 7) {
-				System.out.println();
-				System.out.print("East: ");
+			else if (i < this.objectArray.length - this.xdim) {
+				if (this.objectArray[i] != null) {
+					System.out.print(this.objectArray[i].tdc()+" ");
+				}
+				else if ((i+2)%(xdim+2) == 0) {
+					
+					System.out.print("|   ");
+					for (int j=0;j<xdim;j++) {
+						System.out.print("    ");
+					}
+					System.out.println("|");
+					
+					System.out.print("|   ");
+				}
+				else if ((i+3)%(xdim+2) == 0) {
+					System.out.println("|");
+				}
+				else {
+					System.out.print("    ");
+				}
 			}
-			else if (doorIndex == 14) {
-				System.out.println();
-				System.out.print("South: ");
+			else {
+				if (i == this.objectArray.length - this.xdim) {
+					System.out.print("#---");
+				}
+				if (this.objectArray[i] != null) {
+					System.out.print(this.objectArray[i].tdc()+"-");
+				}
+				else {
+					System.out.print("----");
+				}
+					
 			}
-			else if (doorIndex == 21) {
-				System.out.println();
-				System.out.print("West: ");
-			}
-			//Doors
-			if (this.doors[doorIndex] != null) {
-				System.out.print(this.doors[doorIndex].code +":" +this.doors[doorIndex].name+", " );
-			}
-			doorIndex++;
+			
 		}
+		System.out.println("#");
+		
 		System.out.println();
 		
-		//Other things
-		System.out.print("   Items:\r");
-		Iterator<GameThing> itr = this.getRoomThings();
-		GameThing currentThing;
-		while (itr.hasNext()) {
-			currentThing = itr.next();
-			System.out.print(currentThing.code+":"+currentThing.name+", ");
-		}
-		System.out.println();
+		
 	}
 	
 }

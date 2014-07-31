@@ -90,8 +90,23 @@ public abstract class GameThing {
 		gw.game.actionResponse(HC.GAMETHING_HIT);
 	}
 	
-	public String getName() {
-		return this.name;
+	/**Three Digit Code*/
+	public String tdc() {
+		if (this.code.length() == 1) {
+			return this.code+"  ";
+		}
+		else if (this.code.length() == 2) {
+			return this.code+" ";
+		}
+		else if (this.code.length() == 3) {
+			return this.code;
+		}
+		else {
+			return "   ";
+		}
+		
 	}
 	
+	public String name() { return this.name; }
+	public String code() { return this.code; }
 }

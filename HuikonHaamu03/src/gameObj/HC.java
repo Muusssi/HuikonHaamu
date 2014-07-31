@@ -19,6 +19,9 @@ public class HC {
 	//Room
 		public static String ROOM_DESCRIPTION;
 	
+	//GameObject
+		public static String OBJECT_DESCRIPTION;
+		
 	//Door
 		public static String DOOR_DESCRIPTION;
 		public static String DOOR_GO;
@@ -59,6 +62,9 @@ public class HC {
 			
 			// Room
 			ROOM_DESCRIPTION = "This just an ordinary room.";
+			
+			//
+			OBJECT_DESCRIPTION = "This is surely interesting object but you can't take it with you.";
 			
 			// Door
 			DOOR_DESCRIPTION = "This just an ordinary door.";

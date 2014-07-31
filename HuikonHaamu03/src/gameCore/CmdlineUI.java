@@ -23,15 +23,13 @@ public class CmdlineUI {
 		
 
 		try {
-			Room h1 = new Room(gw, "huone1", null, null);
-			Room h2 = new Room(gw, "huone2", null, null);
-			Room h3 = new Room(gw, "huone3", null, null);
-			
-			Door d1 = new Door(gw, "ovi1", null, null, h1, 1, h2, 15, false);
-			Door d2 = new Door(gw, "ovi2", null, null, h2, 10, h3, 24, false);
-			Door d3 = new Door(gw, "ovi3", null, null, h1, 5, h3, 19, false);
-			
-			Player pl = new Player(gw, "ovi1", null);
+			Room h1 = new Room(gw, "huone1", null, null,3,4);
+			Room h2 = new Room(gw, "huone2", null, null,5,5);
+			GameObject o1 = new GameObject(gw, "tuoli", "siinä voi vaikkapa istua", null, h1, 15);
+			Door d1 = new Door(gw, "ovi", null, null, h1, 3);
+			Door d2 = new Door(gw, "ovi", null, null, h2, 44);
+			d1.linkTo(d2, false);
+			Player pl = new Player(gw, "Pelaaja", null);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -45,27 +43,31 @@ public class CmdlineUI {
 		String[] command;
 		String code = "";
 		
-		/*
-		Set<String> setti = gw.gameThings.keySet();
-		Iterator<String> itr = setti.iterator();
-		while (itr.hasNext()) {
-			System.out.println(itr.next());
-		}
-		*/
 		
 		
 		while (running) {
 			
 			Room currentRoom = gw.player.location;
-			System.out.println(currentRoom.getName() + ":-----------------------");
-			currentRoom.printAvailableGameThings();
+			System.out.println(currentRoom.name() + ":-----------------------");
+			currentRoom.printRoom();
 			HashMap<String,GameThing> available = gw.player.getAvailableGameThings();
 			command = sc.nextLine().split(" ");
 			System.out.println("--------------------------------------");
 			System.out.print("-->");
 			
 			if (command.length != 2) {
-				System.out.println(HC.SYNTAX_ERROR);
+				if (command[0].equals("save")) {
+					gw.saveWorld(null);
+					System.out.println("Gamesaved");
+				}
+				else if (command[0].equals("quit")) {
+					System.out.println("Bye!");
+					break;
+				}
+				else {
+					System.out.println(HC.SYNTAX_ERROR);
+				}
+				
 			}
 			else if (available.containsKey(command[1])) {
 				//action
@@ -88,6 +90,7 @@ public class CmdlineUI {
 				else if (command[0].equals(HC.HIT)) {
 					gw.player.getAvailableGameThings().get(code).hit();
 				}
+				
 				else {
 					System.out.println(HC.UNKNOWN_ACTION);
 				}

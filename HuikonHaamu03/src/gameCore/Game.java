@@ -3,6 +3,8 @@ package gameCore;
 import gameObj.HC;
 
 public class Game {
+	
+	public static int gameVersion = 0;
 
 	public Game() {
 		// TODO Auto-generated constructor stub
