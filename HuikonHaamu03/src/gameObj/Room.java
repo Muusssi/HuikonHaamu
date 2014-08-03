@@ -35,7 +35,7 @@ public class Room extends GameThing {
 	public Room(GameWorld gw, String name, String description, String code, int xdim, int ydim)
 				throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code);
-		if ((3 > xdim && xdim > 7) && (3 > ydim && ydim > 7)) {
+		if ((2 > xdim && xdim > 7) && (2 > ydim && ydim > 7)) {
 			throw new WorldMakingConflict("New room dimensions out of range.");
 		}
 		this.xdim = xdim;
@@ -43,7 +43,7 @@ public class Room extends GameThing {
 		wallOffset = 2*(xdim+ydim);
 		objectArray = new GameObject[xdim*ydim + 2*(xdim+ydim)];
 		
-		this.gw.rooms.put(this.code, this);
+		this.gw.roomMap.put(this.code, this);
 		if(gw.startingRoom == null) {
 			this.setAsStartingRoom();
 		}
@@ -87,10 +87,10 @@ public class Room extends GameThing {
 		}
 		else {
 			gw.gameThings.remove(this.code);
-			gw.rooms.remove(this.code);
+			gw.roomMap.remove(this.code);
 			this.code = newCode;
 			gw.gameThings.put(newCode, this);
-			gw.rooms.put(newCode, this);
+			gw.roomMap.put(newCode, this);
 		}
 	}
 	
@@ -109,27 +109,21 @@ public class Room extends GameThing {
 				// Room::<name>::<code>::<description>::
 				// <xdim>::<ydim>
 		return "Room::"+this.name+"::"+this.code+"::"+this.description+"::"
-				+Integer.toString(this.xdim)+"::"+Integer.toString(this.ydim)+"\r";
+				+Integer.toString(this.xdim)+"::"+Integer.toString(this.ydim)+"::\r";
 	}
 	
-	/** Function for recreating a Room object from the line of text used to save it.
-	 * @throws WorldMakingConflict 
-	 * @throws NumberFormatException */
-	public static Room loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException, NumberFormatException, WorldMakingConflict {
+	/** Function for recreating a Room object from the line of text used to save it. */
+	public static Room loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
 		if (saveLine.startsWith("Room::")) {
 			String[] saveLineComp = saveLine.split("::");
 			Room newRoom;
 			try {
 				newRoom = new Room(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
 									Integer.parseInt(saveLineComp[4]), Integer.parseInt(saveLineComp[5]));
-			} catch (IllegalGameCodeException e) {
-				e.printStackTrace();
-				throw new CorruptedSaveLineException(saveLine);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new CorruptedSaveLineException(saveLine);
 			}
-			
 			return newRoom;
 		}
 		else {
@@ -143,12 +137,44 @@ public class Room extends GameThing {
 		return collection.iterator();
 	}
 	
+	private String[] getObjectListForCmdLineUI() {
+		String[] objectDataArr;
+		if (this.ydim*2 + 2 < this.objectMap.size()) {
+			objectDataArr = new String[this.objectMap.size()];
+		}
+		else {
+			objectDataArr = new String[this.ydim*2 + 2];
+		}
+		Iterator<GameObject> itr = this.objectMap.values().iterator();
+		int i=0;
+		while (itr.hasNext()) {
+			GameObject currentObj = itr.next();
+			objectDataArr[i] = currentObj.tdc()+": "+currentObj.name;
+			i++;
+		}
+		for (int j=i;j<objectDataArr.length;j++) {
+			objectDataArr[j] = "";
+		}
+		return objectDataArr;
+	}
+	
+	
+	
 	/**Method for cmdLineUIs. Prints the view of the room in text based manner.
 	 * This is magic!*/
 	public void printRoom() {
+		
+		int objectListOffset = (this.xdim+2)*4;
+		int objectListCount = 0;
+		String[] objectList = this.getObjectListForCmdLineUI();
 		/* RoomName---------------------
 		 * 
 		 * #----------------------#
+		 * |                      |
+		 * |                      |
+		 * |                      |
+		 * |                      |
+		 * |         5x5          |
 		 * |                      |
 		 * |                      |
 		 * |                      |
@@ -157,7 +183,7 @@ public class Room extends GameThing {
 		 * #----------------------#
 		 * 
 		 * */
-
+		System.out.println();
 		System.out.print("#---");
 		for (int i=0;i<this.objectArray.length;i++) {
 			if (i < this.xdim) {
@@ -168,7 +194,9 @@ public class Room extends GameThing {
 					System.out.print("----");
 				}
 				if (i == xdim-1) {
-					System.out.println("#");
+					System.out.print("#   ");
+					System.out.println(objectList[objectListCount]);
+					objectListCount++;
 				}
 			}
 			else if (i < this.objectArray.length - this.xdim) {
@@ -176,17 +204,20 @@ public class Room extends GameThing {
 					System.out.print(this.objectArray[i].tdc()+" ");
 				}
 				else if ((i+2)%(xdim+2) == 0) {
-					
 					System.out.print("|   ");
 					for (int j=0;j<xdim;j++) {
 						System.out.print("    ");
 					}
-					System.out.println("|");
+					System.out.print("|   ");
+					System.out.println(objectList[objectListCount]);
+					objectListCount++;
 					
 					System.out.print("|   ");
 				}
 				else if ((i+3)%(xdim+2) == 0) {
-					System.out.println("|");
+					System.out.print("|   ");
+					System.out.println(objectList[objectListCount]);
+					objectListCount++;
 				}
 				else {
 					System.out.print("    ");
@@ -202,12 +233,11 @@ public class Room extends GameThing {
 				else {
 					System.out.print("----");
 				}
-					
 			}
-			
 		}
-		System.out.println("#");
-		
+		System.out.print("#   ");
+		System.out.println(objectList[objectListCount]);
+		objectListCount++;
 		System.out.println();
 		
 		

@@ -4,7 +4,7 @@ import gameObj.HC;
 
 public class Game {
 	
-	public static int gameVersion = 0;
+	public static double gameVersion = 0.3;
 
 	public Game() {
 		// TODO Auto-generated constructor stub

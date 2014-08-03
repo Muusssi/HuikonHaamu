@@ -32,7 +32,7 @@ public class Item extends GameThing {
 	@Override
 	public String getSaveline() {
 		/* Item::<name>::<code>::<description>::*/
-		return "Door::"+this.name+"::"+this.code+"::"+this.description+"\r";
+		return "Item::"+this.name+"::"+this.code+"::"+this.description+"\r";
 	}
 	
 	/** Function for recreating an Item from the line of text used to save it.*/

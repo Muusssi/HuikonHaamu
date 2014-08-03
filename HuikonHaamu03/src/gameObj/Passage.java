@@ -1,6 +1,7 @@
 package gameObj;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
 
 public class Passage extends GameThing {
@@ -25,6 +26,7 @@ public class Passage extends GameThing {
 		this.room2 = door2.location;
 		
 		this.closed = closed;
+		this.gw.passageMap.put(this.code, this);
 	}
 
 	@Override
@@ -40,10 +42,43 @@ public class Passage extends GameThing {
 
 	@Override
 	public String getSaveline() {
-		// TODO Auto-generated method stub
-		return null;
+				// Passage::<name>::<code>::<description>::
+				// <door1code>::<door2code>::<closed>
+		return "Passage::"+this.name+"::"+this.code+"::"+this.description+"::"
+				+this.door1.code+"::"+this.door2.code+"::"+this.closed+"::\r";
 	}
-
+	
+	/** Function for recreating a Passage from the line of text used to save it. */
+	public static Passage loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Passage::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Passage newPassage;
+			try {
+				boolean closed;
+				if (saveLineComp[6].equals("false")) {
+					closed = false;
+				}
+				else if (saveLineComp[6].equals("true")) {
+					closed = true;
+				}
+				else {
+					throw new CorruptedSaveLineException(saveLine);
+				}
+				newPassage = new Passage(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
+								(Door)gw.objectMap.get(saveLineComp[4]), (Door)gw.objectMap.get(saveLineComp[5]),
+								closed);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+			}
+			return newPassage;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
+	}
+	
+	
 	@Override
 	public String getCodePrefix() {
 		return "p";

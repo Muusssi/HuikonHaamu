@@ -7,6 +7,7 @@ public class CorruptedSaveLineException extends Exception {
 	
 	public CorruptedSaveLineException(String corruptedLine) {
 		this.corruptedLine = corruptedLine;
+		System.out.println("Line---->"+corruptedLine);
 	}
 
 

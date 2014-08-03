@@ -32,7 +32,7 @@ public abstract class GameThing {
 	 * isn't already in use if so throws IllegalGameCodeException.
 	 * @throws IllegalGameCodeException */
 	public void giveNewCode(String code) throws IllegalGameCodeException {
-		if (code == null) { //New code
+		if (code == null || code.equals("null")) { //New code
 			int codeCount = 1;
 			while (gw.gameThings.containsKey(this.getCodePrefix()+Integer.toString(codeCount))) {
 				codeCount++;
@@ -104,7 +104,6 @@ public abstract class GameThing {
 		else {
 			return "   ";
 		}
-		
 	}
 	
 	public String name() { return this.name; }

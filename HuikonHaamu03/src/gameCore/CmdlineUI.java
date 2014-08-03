@@ -18,18 +18,27 @@ public class CmdlineUI {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Game game = new Game();
-		GameWorld gw = new GameWorld("maailma", "eng");
 		
-
+		Game game = new Game();
+		
+		
+		//Creating a test world:
+		GameWorld gw = null;
 		try {
+			/*
+			 * 
 			Room h1 = new Room(gw, "huone1", null, null,3,4);
-			Room h2 = new Room(gw, "huone2", null, null,5,5);
-			GameObject o1 = new GameObject(gw, "tuoli", "siinä voi vaikkapa istua", null, h1, 15);
+			GameObject o1 = new GameObject(gw, "pöytä", "siinä voi vaikkapa istua", null, h1, 16);
+			Room h2 = new Room(gw, "huone2", null, null,2,7);
+			GameObject o2 = new GameObject(gw, "tuoli", "siinä voi vaikkapa istua", null, h1, 15);
 			Door d1 = new Door(gw, "ovi", null, null, h1, 3);
-			Door d2 = new Door(gw, "ovi", null, null, h2, 44);
+			Door d2 = new Door(gw, "ovi", null, null, h2, 8);
 			d1.linkTo(d2, false);
 			Player pl = new Player(gw, "Pelaaja", null);
+			*/
+			gw = new GameWorld("maailma", "eng");
+			gw.loadWorld("maailma.hhw");
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -38,6 +47,9 @@ public class CmdlineUI {
 		
 		game.startGame(gw);
 		
+		
+		
+		//The actual UI code
 		Scanner sc = new Scanner(System.in);
 		boolean running = true;
 		String[] command;

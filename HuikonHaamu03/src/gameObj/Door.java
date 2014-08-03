@@ -34,7 +34,10 @@ public class Door extends GameObject {
 	}
 	
 	public void open() {
-		if (this.passage.closed) {
+		if (this.passage == null) {
+			gw.game.actionResponse(HC.DOOR_OPEN_CLOSED);
+		}
+		else if (this.passage.closed) {
 			this.passage.closed = false;
 			gw.game.actionResponse(HC.DOOR_OPEN_CLOSED);
 		}
@@ -94,17 +97,10 @@ public class Door extends GameObject {
 	@Override
 	public String getSaveline() { //TODO
 		/* Door::<name>::<code>::<description>::
-		 * <firstRoomCode>::<positionInFirstRoom>::
-		 * <secondRoomCode>::<positionInSecondRoom>::
-		 * <closed>*/
-		
-		/*
-		return "Door::"+this.name+"::"+this.code+"::"+this.description+"::"
-				+this.firstRoom.code+"::"+Integer.toString(this.firstRoomPosition)+"::"
-				+this.secondRoom.code+"::"+Integer.toString(this.secondRoomPosition)+"::"+
-				this.closed+"\r";
-		*/
-		return null;
+		 * <roomCode>::<position>::*/
+		return "Door::"+this.name+"::"+this.code+"::"+this.description+"::"+
+				this.location.code+"::"+Integer.toString(this.position)+"::\r";
+
 	}
 	
 	/** Function for recreating a Door object from the line of text used to save it.*/
@@ -113,7 +109,14 @@ public class Door extends GameObject {
 			String[] saveLineComp = saveLine.split("::");
 			Door newDoor;
 			try {
-				//TODO
+				if (saveLineComp[4].equals(null)) {
+					newDoor = new Door(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
+							null, Integer.parseInt(saveLineComp[5]));
+				}
+				else {
+					newDoor = new Door(gw, saveLineComp[1], saveLineComp[3], saveLineComp[2],
+							gw.roomMap.get(saveLineComp[4]), Integer.parseInt(saveLineComp[5]));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new CorruptedSaveLineException(saveLine);

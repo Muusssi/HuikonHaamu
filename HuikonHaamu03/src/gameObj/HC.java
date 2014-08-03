@@ -24,7 +24,9 @@ public class HC {
 		
 	//Door
 		public static String DOOR_DESCRIPTION;
-		public static String DOOR_GO;
+		public static String DOOR_NO_PASSAGE;
+		//public static String DOOR_GO;
+		public static String DOOR_GO_NO_PASSAGE;
 		public static String DOOR_OPEN_CLOSED;
 		public static String DOOR_OPEN_OPENED;
 		public static String DOOR_CLOSE_CLOSED;
@@ -68,6 +70,8 @@ public class HC {
 			
 			// Door
 			DOOR_DESCRIPTION = "This just an ordinary door.";
+
+			DOOR_GO_NO_PASSAGE = "This door leads no where.";
 			DOOR_OPEN_CLOSED = "You open the door.";
 			DOOR_OPEN_OPENED = "This door is already open.";
 			DOOR_CLOSE_CLOSED = "This door is already closed.";
