@@ -16,12 +16,10 @@ public class Passage extends GameThing {
 			throws IllegalGameCodeException {
 		super(gw, name, description, code);
 		this.door1 = door1;
-		this.door1.linked = true;
 		this.door1.passage = this;
 		this.room1 = door1.location;
 		
 		this.door2 = door2;
-		this.door2.linked = true;
 		this.door2.passage = this;
 		this.room2 = door2.location;
 		
@@ -82,6 +80,12 @@ public class Passage extends GameThing {
 	@Override
 	public String getCodePrefix() {
 		return "p";
+	}
+
+	@Override
+	public String getEditorInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

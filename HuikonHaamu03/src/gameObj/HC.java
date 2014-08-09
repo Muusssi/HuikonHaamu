@@ -5,6 +5,8 @@ package gameObj;
  */
 public class HC {
 	
+	
+
 	public static String lang;
 	
 	//GameThing
@@ -17,7 +19,27 @@ public class HC {
 		public static String GAMETHING_HIT;
 	
 	//Room
+		public static String ROOM_VOID_NAME;
+
 		public static String ROOM_DESCRIPTION;
+
+		public static String ROOM_EDITOR_NAME_LABEL;
+		public static String ROOM_EDITOR_NAME_TOOLTIP;
+		public static String ROOM_EDITOR_MISSING_NAME;
+		
+		public static String ROOM_EDITOR_DESCRIPTION_LABEL;
+		public static String ROOM_EDITOR_DESCRIPTION_TOOLTIP;
+		
+		public static String ROOM_EDITOR_CODE_LABEL;
+		public static String ROOM_EDITOR_CODE_TOOLTIP;
+		public static String ROOM_EDITOR_CODE_TAKEN;
+		
+		public static String ROOM_EDITOR_XDIM_LABEL;
+		public static String ROOM_EDITOR_XDIM_TOOLTIP;
+		public static String ROOM_EDITOR_YDIM_LABEL;
+		public static String ROOM_EDITOR_YDIM_TOOLTIP;
+		public static String ROOM_EDITOR_DIM_OUT_OF_BOUNDS;
+		public static String ROOM_EDITOR_DIM_NOT_INT;
 	
 	//GameObject
 		public static String OBJECT_DESCRIPTION;
@@ -25,7 +47,6 @@ public class HC {
 	//Door
 		public static String DOOR_DESCRIPTION;
 		public static String DOOR_NO_PASSAGE;
-		//public static String DOOR_GO;
 		public static String DOOR_GO_NO_PASSAGE;
 		public static String DOOR_OPEN_CLOSED;
 		public static String DOOR_OPEN_OPENED;
@@ -50,6 +71,13 @@ public class HC {
 		
 		public static String HELP;
 		
+	//EDITOR
+		public static String EDITOR_ROOMS_LIST_LABEL;
+		public static String EDITOR_ROOMS_BUTTON_TEXT;
+		public static String EDITOR_ROOMS_BUTTON_TOOLTIP;
+
+		public static String EDITOR_OBJECT_LIST_LABEL;
+
 	public static void HCinit(String lan) {
 		lang = lan;
 		
@@ -94,7 +122,8 @@ public class HC {
 			HELP = "Someone should write some help instructions here."; //TODO
 		}
 		
-		if (lang.equals("fi")) { // TODO
+
+		if (lang.equals("fi")) { // TODO SUOMEKSI VAAN
 			//GameThing responses:
 			GAMETHING_TAKE = "You can't take that thing and carry it around.";
 			GAMETHING_PUT = "You can't put that there.";

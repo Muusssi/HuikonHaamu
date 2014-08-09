@@ -8,8 +8,7 @@ import gameExceptions.WorldMakingConflict;
 
 public class Door extends GameObject {
 	
-	public Passage passage;
-	public boolean linked = false;
+	public Passage passage = null;
 
 	/**Door is a link to a passage from one room to another.*/
 	public Door(GameWorld gw, String name, String description, String code,
@@ -20,7 +19,7 @@ public class Door extends GameObject {
 	}
 	
 	public void linkTo(Door otherDoor, boolean closed) throws WorldMakingConflict {
-		if (this.linked || otherDoor.linked) {
+		if (this.passage == null || otherDoor.passage == null) {
 			throw new WorldMakingConflict("Door already linked.");
 		}
 		else {
@@ -128,4 +127,15 @@ public class Door extends GameObject {
 		}
 	}
 
+	@Override
+	public String getEditorInfo() {
+		if (this.passage == null) {
+			return this.code+": "+this.name+" -unlinked Door";
+		}
+		else {
+			return this.code+": "+this.name+" -linked Door";
+		}
+
+	}
+	
 }

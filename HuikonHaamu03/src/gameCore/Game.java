@@ -4,6 +4,7 @@ import gameObj.HC;
 
 public class Game {
 	
+	public static boolean debug = true;
 	public static double gameVersion = 0.3;
 
 	public Game() {

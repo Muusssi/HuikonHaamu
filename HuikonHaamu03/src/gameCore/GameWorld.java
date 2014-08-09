@@ -9,12 +9,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.swing.ListModel;
+
 import gameExceptions.CorruptedSaveLineException;
+import gameExceptions.IllegalGameCodeException;
+import gameExceptions.WorldMakingConflict;
 import gameObj.*;
 
 public class GameWorld {
 	
-	protected String name;
+	public String name;
 	public String language;
 	public Game game = null;
 	public Player player = null;
@@ -24,6 +28,7 @@ public class GameWorld {
 	
 	public HashMap<String,Room> roomMap = new HashMap<String,Room>();
 	public Room startingRoom = null;
+	public Room voidRoom = null;
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
 	public HashMap<String,Passage> passageMap = new HashMap<String,Passage>();
 	
@@ -143,8 +148,6 @@ public class GameWorld {
 				}
 		    	line = reader.readLine();
 		    }
-		    
-		    
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	      throw new RuntimeException(e);
@@ -159,5 +162,33 @@ public class GameWorld {
 	    }	
 		return this;
 	}
-	
+
+
+	public String[] getThingArray() {
+		Iterator<GameThing> itr = this.gameThings.values().iterator();
+		String[] thingArray = new String[this.gameThings.size()];
+		int i = 0;
+		while (itr.hasNext()) {
+			thingArray[i] = itr.next().getEditorInfo();
+			i++;
+		}
+
+		return thingArray;
+	}
+
+
+
+	public String[] getRoomArrayForEditor() {
+		Iterator<Room> itr = this.roomMap.values().iterator();
+		String[] roomArray = new String[this.roomMap.size()];
+		int i = 0;
+		Room current;
+		while (itr.hasNext()) {
+			current = itr.next();
+			roomArray[i] = current.getEditorInfo();
+			i++;
+		}
+		return roomArray;
+	}
+
 }

@@ -11,7 +11,7 @@ import gameExceptions.WorldMakingConflict;
 
 	
 public class Room extends GameThing {
-	
+
 	/*Positions (0-76): if dim=7x7
 	 * Seven possible positions on each side starting from left North
 	 *    0  1  2  3  4  5  6 
@@ -24,24 +24,22 @@ public class Room extends GameThing {
 	 * 21 70 71 72 73 74 75 76 13
 	 *    20 19 18 17 16 15 14 
 	 *    */
-	
-	protected int xdim;
-	protected int ydim;
-	protected int wallOffset;
-	protected GameObject[] objectArray;
+
+	public int xdim;
+	public int ydim;
+	public GameObject[] objectArray;
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
-	
-	
+
+
 	public Room(GameWorld gw, String name, String description, String code, int xdim, int ydim)
 				throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code);
-		if ((2 > xdim && xdim > 7) && (2 > ydim && ydim > 7)) {
+		if ((3 > xdim && xdim > 9) && (3 > ydim && ydim > 9)) {
 			throw new WorldMakingConflict("New room dimensions out of range.");
 		}
 		this.xdim = xdim;
 		this.ydim = ydim;
-		wallOffset = 2*(xdim+ydim);
-		objectArray = new GameObject[xdim*ydim + 2*(xdim+ydim)];
+		objectArray = new GameObject[xdim*ydim];
 		
 		this.gw.roomMap.put(this.code, this);
 		if(gw.startingRoom == null) {
@@ -49,6 +47,12 @@ public class Room extends GameThing {
 		}
 	}
 	
+	protected Room(GameWorld gw)
+			throws IllegalGameCodeException, WorldMakingConflict {
+		super(gw, HC.ROOM_VOID_NAME, "", "void");
+	}
+
+
 	/**Tries to add a GameObject to the given position.*/
 	public void putObject(GameObject newGameObject, int position) throws WorldMakingConflict {
 		if (objectArray[position] == null) {
@@ -162,7 +166,7 @@ public class Room extends GameThing {
 	
 	/**Method for cmdLineUIs. Prints the view of the room in text based manner.
 	 * This is magic!*/
-	public void printRoom() {
+	public void printRoom() { //TODO depricated
 		
 		int objectListOffset = (this.xdim+2)*4;
 		int objectListCount = 0;
@@ -243,4 +247,22 @@ public class Room extends GameThing {
 		
 	}
 	
+	public String[] getObjectArrayForEditor() {
+		Iterator<GameObject> itr = this.objectMap.values().iterator();
+		String[] objectArray = new String[this.objectMap.size()];
+		int i = 0;
+		GameObject current;
+		while (itr.hasNext()) {
+			current = itr.next();
+			objectArray[i] = current.getEditorInfo();
+			i++;
+		}
+		return objectArray;
+	}
+
+	@Override
+	public String getEditorInfo() {
+		return this.code+": "+this.name+" - "+this.xdim+"x"+this.ydim;
+	}
+
 }

@@ -87,4 +87,9 @@ public class GameObject extends GameThing {
 		return "o";
 	}
 
+	@Override
+	public String getEditorInfo() {
+		return this.code+": "+this.name+" -Object";
+	}
+
 }

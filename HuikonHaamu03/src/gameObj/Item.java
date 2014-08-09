@@ -53,4 +53,10 @@ public class Item extends GameThing {
 		}
 	}
 
+	@Override
+	public String getEditorInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

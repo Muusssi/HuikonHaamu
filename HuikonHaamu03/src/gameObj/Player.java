@@ -68,5 +68,11 @@ public class Player extends GameThing {
 		interactables.putAll(this.location.objectMap);
 		return interactables;
 	}
+
+	@Override
+	public String getEditorInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

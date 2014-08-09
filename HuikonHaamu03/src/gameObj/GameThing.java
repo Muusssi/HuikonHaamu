@@ -12,7 +12,6 @@ public abstract class GameThing {
 	
 	public String codePrefix;
 	
-	
 	public GameThing(GameWorld gw, String name, String description, String code) 
 			throws IllegalGameCodeException {
 		this.gw = gw;
@@ -49,6 +48,15 @@ public abstract class GameThing {
 		}
 	}
 	
+	/**Returns the next available gameCode with given prefix.*/
+	public static String getNextCode(GameWorld gw, String prefix) {
+		int codeCount = 1;
+		while (gw.gameThings.containsKey(prefix+Integer.toString(codeCount))) {
+			codeCount++;
+		}
+		return prefix+Integer.toString(codeCount);
+	}
+
 	/** Tries to change the GameThings code to the given newCode everywhere it is currently used.
 	 * Throws IllegalGameCodeException if unable to do that for some reason.
 	 * @throws IllegalGameCodeException */
@@ -61,7 +69,6 @@ public abstract class GameThing {
 	public abstract String getCodePrefix();
 	
 	/* The player actions: */
-	
 	public void explore() {
 		gw.game.actionResponse(this.description);
 	}
@@ -106,6 +113,9 @@ public abstract class GameThing {
 		}
 	}
 	
+	/**Return string that is used to represent the GameThing in the editor.*/
+	public abstract String getEditorInfo();
+
 	public String name() { return this.name; }
 	public String code() { return this.code; }
 }
