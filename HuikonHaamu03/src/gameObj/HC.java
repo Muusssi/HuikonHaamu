@@ -92,6 +92,23 @@ public class HC {
 			
 			// Room
 			ROOM_DESCRIPTION = "This just an ordinary room.";
+			ROOM_EDITOR_NAME_LABEL = "Name:";
+			ROOM_EDITOR_NAME_TOOLTIP = "Put the name.";
+			ROOM_EDITOR_MISSING_NAME = "You need to put name.";
+			
+			ROOM_EDITOR_DESCRIPTION_LABEL = "";
+			ROOM_EDITOR_DESCRIPTION_TOOLTIP = "";
+			
+			ROOM_EDITOR_CODE_LABEL = "";
+			ROOM_EDITOR_CODE_TOOLTIP = "";
+			ROOM_EDITOR_CODE_TAKEN = "";
+			
+			ROOM_EDITOR_XDIM_LABEL = "";
+			ROOM_EDITOR_XDIM_TOOLTIP = "";
+			ROOM_EDITOR_YDIM_LABEL = "";
+			ROOM_EDITOR_YDIM_TOOLTIP = "";
+			ROOM_EDITOR_DIM_OUT_OF_BOUNDS = "";
+			ROOM_EDITOR_DIM_NOT_INT = "";
 			
 			//
 			OBJECT_DESCRIPTION = "This is surely interesting object but you can't take it with you.";
