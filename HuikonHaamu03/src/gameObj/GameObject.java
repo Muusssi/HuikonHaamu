@@ -80,7 +80,7 @@ public class GameObject extends GameThing {
 			throw new CorruptedSaveLineException(saveLine);
 		}
 	}
-
+	
 	
 	@Override
 	public String getCodePrefix() {
@@ -90,6 +90,14 @@ public class GameObject extends GameThing {
 	@Override
 	public String getEditorInfo() {
 		return this.code+": "+this.name+" -Object";
+	}
+
+	@Override
+	public void remove() {
+		gw.gameThings.remove(this.code);
+		gw.objectMap.remove(this.code);
+		this.location.objectMap.remove(this.code);
+		this.location.objectArray[this.position] = null;
 	}
 
 }

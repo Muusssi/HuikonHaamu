@@ -14,10 +14,13 @@ import javax.swing.JButton;
 public class GameObjectButton extends JButton {
 	
 	GameObject gameObject = null;
+	int chosenPosition = 0;
 	
-	class TestListener implements ActionListener {
+	class PositionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("painoit "+gameObject.name());
+			GameObjectButton clickedButton = (GameObjectButton)e.getSource();
+			System.out.println(clickedButton.chosenPosition);
+			WorldEditor.chosenPosition = clickedButton.chosenPosition;
 		}
 	}
 	
@@ -30,16 +33,16 @@ public class GameObjectButton extends JButton {
 		else {
 			this.setToolTipText(gameObject.name());
 		}
-		
-		this.addActionListener(new TestListener());
-		
+		this.chosenPosition = gameObject.position;
+		this.addActionListener(new PositionListener());
 		
 	}
 	
 	public GameObjectButton(int xpos, int ypos, Room room, int roomPosition) {
 		this.setBounds(xpos*30, ypos*30, 20, 20);
 		this.setToolTipText(Integer.toString(roomPosition));
-		
+		this.chosenPosition = roomPosition;
+		this.addActionListener(new PositionListener());
 	}
 
 

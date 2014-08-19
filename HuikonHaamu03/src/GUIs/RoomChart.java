@@ -1,5 +1,6 @@
 package GUIs;
 
+import gameCore.Game;
 import gameCore.GameWorld;
 import gameExceptions.IllegalGameCodeException;
 import gameExceptions.WorldMakingConflict;
@@ -13,7 +14,7 @@ public class RoomChart {
 
 	private static final long serialVersionUID = 1L;
 	public static JPanel chartPanel = new JPanel();;
-	public static Label roomNameLabel = new Label();
+	public static JLabel roomNameLabel = new JLabel();
 	
 	public static void setRoomChart(JPanel panel, Room room) {
 		if (room == null) {
@@ -26,10 +27,14 @@ public class RoomChart {
 		int xdim = room.xdim;
 		int ydim = room.ydim;
 		
-		panel.remove(roomNameLabel);
-		roomNameLabel.setText(room.name());
-		roomNameLabel.setBounds(0, 0, 100, 15);
+		String code = "";
+		if (Game.debug) {
+			code = room.code()+": ";
+		}
+		roomNameLabel.setText(code+room.name());
+		roomNameLabel.setBounds(0, 0, 200, 15);
 		panel.add(roomNameLabel);
+		
 		chartPanel.removeAll();
 		chartPanel.setBounds(0, 20, xdim*30-10, ydim*30-10);
 		chartPanel.setBorder(new BasicBorders.FieldBorder(Color.black, Color.black, Color.black, Color.black));
@@ -52,20 +57,26 @@ public class RoomChart {
 		panel.add(chartPanel);
 	}
 
+
 	public static void setRoomPositionChart(JPanel panel, Room room) {
 		if (room == null) {
 			return;
 		}
 		GameObject[] objArr = room.objectArray;
+
 		int xpos = 0;
 		int ypos = 0;
 		int xdim = room.xdim;
 		int ydim = room.ydim;
 		
-		panel.remove(roomNameLabel);
-		roomNameLabel.setText(room.name());
-		roomNameLabel.setBounds(0, 0, 100, 15);
+		String code = "";
+		if (Game.debug) {
+			code = room.code()+": ";
+		}
+		roomNameLabel.setText(code+room.name());
+		roomNameLabel.setBounds(0, 0, 200, 15);
 		panel.add(roomNameLabel);
+		
 		chartPanel.removeAll();
 		chartPanel.setBounds(0, 20, xdim*30-10, ydim*30-10);
 		chartPanel.setBorder(new BasicBorders.FieldBorder(Color.black, Color.black, Color.black, Color.black));
@@ -74,14 +85,14 @@ public class RoomChart {
 		JButton objButton;
 		int buttonCount = 0;
 		for (int i=0;i<objArr.length;i++) {
-			if (objArr[i] != null) {
-				objButton = new GameObjectButton(xpos, ypos, objArr[i]);
-				objButton.setEnabled(false);
+			if (objArr[i] == null) {
+				objButton = new GameObjectButton(xpos, ypos, room, i);
 				chartPanel.add(objButton);
 				buttonCount++;
 			}
 			else {
-				objButton = new GameObjectButton(xpos, ypos, room, i);
+				objButton = new GameObjectButton(xpos, ypos, objArr[i]);
+				objButton.setEnabled(false);
 				chartPanel.add(objButton);
 				buttonCount++;
 			}

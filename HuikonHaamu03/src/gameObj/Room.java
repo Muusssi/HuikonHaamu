@@ -74,7 +74,7 @@ public class Room extends GameThing {
 	
 	@Override
 	public void giveDescription(String description) {
-		if (description == null) {
+		if (description == null || description.equals("")) {
 			this.description = HC.ROOM_DESCRIPTION;
 		}
 		else {
@@ -263,6 +263,11 @@ public class Room extends GameThing {
 	@Override
 	public String getEditorInfo() {
 		return this.code+": "+this.name+" - "+this.xdim+"x"+this.ydim;
+	}
+
+	@Override
+	public void remove() {
+		
 	}
 
 }

@@ -59,4 +59,9 @@ public class Item extends GameThing {
 		return null;
 	}
 
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+	}
+
 }

@@ -85,8 +85,8 @@ public class Door extends GameObject {
 	@Override
 	public void changeCode(String newCode) throws IllegalGameCodeException {
 		// TODO Auto-generated method stub
-
 	}
+	
 	
 	@Override
 	public String getCodePrefix() {

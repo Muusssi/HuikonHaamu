@@ -46,6 +46,10 @@ public class GameWorld {
 		return null;
 	}
 	
+	public void remove(GameThing thing) {
+		
+	}
+	
 	/**Creates a text file named <saveName>.hhw that works as a save file for the current world.
 	 * If saveName is null then file name is <worldName>.hhw*/
 	public void saveWorld(String saveName) {
@@ -62,7 +66,8 @@ public class GameWorld {
 		    //Header data:
 		    writer.write("Save file for a HuikonHaamu GameWorld\r");
 		    writer.write("HHversion:"+Double.toString(Game.gameVersion)+"\r");
-		    writer.write(this.name+"--------------------------------\r");
+		    writer.write(this.language+"\r");
+		    writer.write(this.name+":--------------------------------\r");
 		    
 		    //Rooms
 		    Collection<Room> roomCollection = roomMap.values();
@@ -107,8 +112,9 @@ public class GameWorld {
 	}
 	
 	/**This function recreates a GameWorld from a HHsave file.*/
-	public GameWorld loadWorld(String fileName) {
+	public static GameWorld loadWorld(String fileName) {
 		BufferedReader reader = null;
+		GameWorld newWorld;
 	    try {
 		    reader = new BufferedReader( new FileReader(fileName));
 		    //Header data:
@@ -121,27 +127,29 @@ public class GameWorld {
 		    else {
 		    	throw new CorruptedSaveLineException(line);
 		    }
-		    reader.readLine();//-------:line
+		    String lang = reader.readLine();// lang
+		    line = reader.readLine();//WorldName:-------
+		    newWorld = new GameWorld(line.split(":")[0],lang);
 		    
 		    line = reader.readLine();
 		    while (line != null) {
 		    	if (line.startsWith("Room::")) {
-		    		Room.loadLine(line, this);
+		    		Room.loadLine(line, newWorld);
 		    	}
 		    	else if (line.startsWith("Object::")) {
-		    		GameObject.loadLine(line, this);
+		    		GameObject.loadLine(line, newWorld);
 		    	}
 				else if (line.startsWith("Door::")) {
-					Door.loadLine(line, this);
+					Door.loadLine(line, newWorld);
 		    	}
 				else if (line.startsWith("Item::")) {
-					Item.loadLine(line, this);
+					Item.loadLine(line, newWorld);
 				}
 				else if (line.startsWith("Passage::")) {
-					Passage.loadLine(line, this);
+					Passage.loadLine(line, newWorld);
 				}
 				else if (line.startsWith("Player::")) {
-					Player.loadLine(line, this);
+					Player.loadLine(line, newWorld);
 				}
 				else {
 					throw new CorruptedSaveLineException(line);
@@ -160,7 +168,7 @@ public class GameWorld {
 	        }
 	      }
 	    }	
-		return this;
+		return newWorld;
 	}
 
 

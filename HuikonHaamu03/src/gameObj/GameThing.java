@@ -16,6 +16,9 @@ public abstract class GameThing {
 			throws IllegalGameCodeException {
 		this.gw = gw;
 		this.name = name;
+		if (description == null || description.equals("")) {
+			description = null;
+		}
 		this.giveDescription(description);
 		this.giveNewCode(code);
 		this.gw.gameThings.put(this.code, this);
@@ -64,6 +67,8 @@ public abstract class GameThing {
 	
 	/**Returns the String line that can be used to save and later recreate the GameThing.*/
 	public abstract String getSaveline();
+	
+	public abstract void remove();
 	
 	/**Returns the appropriate gameCodePrefix for the class that the GameThing is an instance of.*/
 	public abstract String getCodePrefix();

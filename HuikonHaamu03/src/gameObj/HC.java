@@ -23,16 +23,10 @@ public class HC {
 
 		public static String ROOM_DESCRIPTION;
 
-		public static String ROOM_EDITOR_NAME_LABEL;
 		public static String ROOM_EDITOR_NAME_TOOLTIP;
 		public static String ROOM_EDITOR_MISSING_NAME;
 		
-		public static String ROOM_EDITOR_DESCRIPTION_LABEL;
 		public static String ROOM_EDITOR_DESCRIPTION_TOOLTIP;
-		
-		public static String ROOM_EDITOR_CODE_LABEL;
-		public static String ROOM_EDITOR_CODE_TOOLTIP;
-		public static String ROOM_EDITOR_CODE_TAKEN;
 		
 		public static String ROOM_EDITOR_XDIM_LABEL;
 		public static String ROOM_EDITOR_XDIM_TOOLTIP;
@@ -44,6 +38,18 @@ public class HC {
 	//GameObject
 		public static String OBJECT_DESCRIPTION;
 		
+		public static String OBJECT_EDITOR_NAME_TOOLTIP;
+		public static String OBJECT_EDITOR_MISSING_NAME;
+		
+		public static String OBJECT_EDITOR_DESCRIPTION_TOOLTIP;
+		
+		
+		public static String OBJECT_EDITOR_POSITION_LABEL;
+		public static String OBJECT_EDITOR_POSITION_TOOLTIP;
+		
+		public static String OBJECT_EDITOR_POSITION_ILLEGAL;
+		public static String EDITOR_OBJECT_NO_ROOMS_ADDING;
+		
 	//Door
 		public static String DOOR_DESCRIPTION;
 		public static String DOOR_NO_PASSAGE;
@@ -54,8 +60,6 @@ public class HC {
 		public static String DOOR_CLOSE_OPENED;
 		public static String DOOR_GO_CLOSED;
 		public static String DOOR_GO_OPENED;
-	
-	
 	
 	//CommandLineUI
 		public static String GO;
@@ -73,11 +77,41 @@ public class HC {
 		
 	//EDITOR
 		public static String EDITOR_ROOMS_LIST_LABEL;
-		public static String EDITOR_ROOMS_BUTTON_TEXT;
-		public static String EDITOR_ROOMS_BUTTON_TOOLTIP;
+		public static String EDITOR_ROOM_BUTTON_TEXT;
+		public static String EDITOR_ROOM_BUTTON_TOOLTIP;
+		public static String EDITOR_NEW_ROOM_TTILE;
 
 		public static String EDITOR_OBJECT_LIST_LABEL;
+		public static String EDITOR_OBJECT_BUTTON_TEXT;
+		public static String EDITOR_OBJECT_BUTTON_TOOLTIP;
+		public static String EDITOR_OBJECT_POSITION_SETTER_TITLE;
+		
 
+		public static String EDITOR_NAME_LABEL;
+		
+		public static String EDITOR_DESCRIPTION_LABEL;
+		public static String EDITOR_DESCRIPTION_TOOLTIP;
+		
+		public static String EDITOR_CODE_LABEL;
+		public static String EDITOR_CODE_TOOLTIP;
+		public static String EDITOR_CODE_TAKEN;
+		
+		public static String EDITOR_SAVENAME_LABEL;
+		public static String EDITOR_SAVENAME_TITLE = "Save name";
+		public static String EDITOR_SAVENAME_TOOLTIP = "Name of the file used to save this world.";
+		public static String EDITOR_SAVENAME_MISSING = "Can't make a file with no name.";
+		public static String EDITOR_SAVE_BUTTON_TEXT;
+		public static String EDITOR_SAVE_BUTTON_TOOLTIP = "Save the wolrd you have created.";
+		
+		public static String EDITOR_LOAD_FILE_MISSING = "File with given name wasn't found.";
+		public static String EDITOR_LOAD_BUTTON_TEXT = "Load";
+		public static String EDITOR_LOAD_BUTTON_TOOLTIP = "Start working with a previously saved world.";
+		
+		public static String EDITOR_WORLD_NAME_LABEL = "World Name:";
+		public static String EDITOR_WORLD_NAME_TOOLTIP = "Give name for the game world you are making.";
+		public static String EDITOR_WORLD_NAME_TITLE = "New world name:";
+		
+		
 	public static void HCinit(String lan) {
 		lang = lan;
 		
@@ -91,27 +125,36 @@ public class HC {
 			GAMETHING_HIT = "Don't be so aggressive. You had no reason for hitting that thing.";
 			
 			// Room
+			ROOM_VOID_NAME = "void";
+			
 			ROOM_DESCRIPTION = "This just an ordinary room.";
-			ROOM_EDITOR_NAME_LABEL = "Name:";
+			
 			ROOM_EDITOR_NAME_TOOLTIP = "Give a name for the room.";
 			ROOM_EDITOR_MISSING_NAME = "The new room has to have a name.";
 			
-			ROOM_EDITOR_DESCRIPTION_LABEL = "Description:";
 			ROOM_EDITOR_DESCRIPTION_TOOLTIP = "Description is what the player gets when he/she looks the room.";
 			
-			ROOM_EDITOR_CODE_LABEL = "";
-			ROOM_EDITOR_CODE_TOOLTIP = "";
-			ROOM_EDITOR_CODE_TAKEN = "";
+			ROOM_EDITOR_XDIM_LABEL = "Width";
+			ROOM_EDITOR_XDIM_TOOLTIP = "The size of the room from West to East. Between 2 and 7.";
+			ROOM_EDITOR_YDIM_LABEL = "Length";
+			ROOM_EDITOR_YDIM_TOOLTIP = "The size of the room from North to South. Between 2 and 7.";
+			ROOM_EDITOR_DIM_OUT_OF_BOUNDS = "The dimensions of the room are out of bounds. Must be between 2 and 7.";
+			ROOM_EDITOR_DIM_NOT_INT = "Give the measures of the room as integers.";
+		
 			
-			ROOM_EDITOR_XDIM_LABEL = "";
-			ROOM_EDITOR_XDIM_TOOLTIP = "";
-			ROOM_EDITOR_YDIM_LABEL = "";
-			ROOM_EDITOR_YDIM_TOOLTIP = "";
-			ROOM_EDITOR_DIM_OUT_OF_BOUNDS = "";
-			ROOM_EDITOR_DIM_NOT_INT = "";
-			
-			//
+			//Objects
 			OBJECT_DESCRIPTION = "This is surely interesting object but you can't take it with you.";
+			
+			OBJECT_EDITOR_NAME_TOOLTIP = "Give a name for the new object";
+			OBJECT_EDITOR_MISSING_NAME = "You have to give a name to the new object.";
+			
+			OBJECT_EDITOR_DESCRIPTION_TOOLTIP = "Description is what the player gets when he/she looks the object.";
+			
+			OBJECT_EDITOR_POSITION_LABEL = "Position:";
+			OBJECT_EDITOR_POSITION_TOOLTIP = "The place of the object in the room. Integer starting from 0. Can be left empty.";
+			
+			OBJECT_EDITOR_POSITION_ILLEGAL = "The given position isn't allowed.";
+			EDITOR_OBJECT_NO_ROOMS_ADDING = "You first need to create rooms to put objects in.";
 			
 			// Door
 			DOOR_DESCRIPTION = "This just an ordinary door.";
@@ -137,6 +180,30 @@ public class HC {
 			UNKNOWN_ACTION = "Unknown action. Use "+GO+", "+OPEN+", "+CLOSE+", "+TAKE+", "+LOOK+" or "+HIT;
 			
 			HELP = "Someone should write some help instructions here."; //TODO
+			
+			//EDITOR
+			EDITOR_ROOMS_LIST_LABEL = "Rooms:";
+			EDITOR_ROOM_BUTTON_TEXT = "Room";
+			EDITOR_ROOM_BUTTON_TOOLTIP = "Add a new room to this game world.";
+			EDITOR_NEW_ROOM_TTILE = "New room";
+
+			EDITOR_OBJECT_LIST_LABEL = "Objects:";
+			EDITOR_OBJECT_BUTTON_TEXT = "Object";
+			EDITOR_OBJECT_BUTTON_TOOLTIP = "Add a new object to the chosen room.";
+			EDITOR_OBJECT_POSITION_SETTER_TITLE = "Choose position of the object:";
+			
+
+			EDITOR_NAME_LABEL = "Name:";
+			
+			EDITOR_DESCRIPTION_LABEL = "Description:";
+			EDITOR_DESCRIPTION_TOOLTIP = "Description is what the player receives when he/she looks the this.";
+			
+			EDITOR_CODE_LABEL = "Code:";
+			EDITOR_CODE_TOOLTIP = "Code is used to distinguish each different thing in the game world.";
+			EDITOR_CODE_TAKEN = "The given code is already in use.";
+			
+			EDITOR_SAVENAME_LABEL = "Save Name";
+			EDITOR_SAVE_BUTTON_TEXT = "Save";
 		}
 		
 

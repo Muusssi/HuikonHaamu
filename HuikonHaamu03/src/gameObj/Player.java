@@ -74,5 +74,11 @@ public class Player extends GameThing {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
