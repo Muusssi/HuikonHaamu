@@ -68,6 +68,7 @@ public abstract class GameThing {
 	/**Returns the String line that can be used to save and later recreate the GameThing.*/
 	public abstract String getSaveline();
 	
+	/**This method is called when user wants to delete the object.*/
 	public abstract void remove();
 	
 	/**Returns the appropriate gameCodePrefix for the class that the GameThing is an instance of.*/

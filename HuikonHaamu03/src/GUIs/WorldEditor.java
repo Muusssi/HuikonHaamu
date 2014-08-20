@@ -60,12 +60,113 @@ public class WorldEditor extends JFrame {
 		chartPane.setVisible(true);
 		editorPanel.add(chartPane);
 	}
+	
 	private void updateEditor() {
 		this.updateRoomList();
 		this.updateObjectList(null);
 	}
 	
 	class AddRoom implements ActionListener {
+		JTextField roomNameField = new JTextField(0);
+		JTextField roomDescriptionField = new JTextField(0);
+		JTextField roomCodeField = new JTextField(0);
+		JTextField xdimField = new JTextField(0);
+		JTextField ydimField = new JTextField(0);
+		String roomName;
+		String roomDesc;
+		String roomCode;
+		int xdim;
+		int ydim;
+
+		public void actionPerformed(ActionEvent e) {
+			JLabel nameLabel = new JLabel(HC.EDITOR_NAME_LABEL);
+			nameLabel.setToolTipText(HC.ROOM_EDITOR_NAME_TOOLTIP);
+
+			JLabel descLabel = new JLabel(HC.EDITOR_DESCRIPTION_LABEL);
+			descLabel.setToolTipText(HC.ROOM_EDITOR_DESCRIPTION_TOOLTIP);
+
+			JLabel codeLabel = new JLabel(HC.EDITOR_CODE_LABEL);
+			codeLabel.setToolTipText(HC.EDITOR_CODE_TOOLTIP);
+
+			JLabel xdimLabel = new JLabel(HC.ROOM_EDITOR_XDIM_LABEL);
+			xdimLabel.setToolTipText(HC.ROOM_EDITOR_XDIM_TOOLTIP);
+
+			JLabel ydimLabel = new JLabel(HC.ROOM_EDITOR_YDIM_LABEL);
+			ydimLabel.setToolTipText(HC.ROOM_EDITOR_YDIM_TOOLTIP);
+
+			JPanel newRoomPanel = new JPanel();
+
+			roomNameField.setText("");
+			roomDescriptionField.setText(HC.ROOM_DESCRIPTION);
+			roomCodeField.setText(GameThing.getNextCode(gameWorld, "r"));
+			xdimField.setText("3");
+			ydimField.setText("3");
+
+			newRoomPanel.setLayout(new GridLayout(5,0));
+			newRoomPanel.add(nameLabel);
+			newRoomPanel.add(roomNameField);
+			newRoomPanel.add(descLabel);
+			newRoomPanel.add(roomDescriptionField);
+			newRoomPanel.add(codeLabel);
+			newRoomPanel.add(roomCodeField);
+
+			newRoomPanel.add(xdimLabel);
+			newRoomPanel.add(xdimField);
+			newRoomPanel.add(ydimLabel);
+			newRoomPanel.add(ydimField);
+
+			boolean roomOK = false;
+
+			do {
+				int result = JOptionPane.showConfirmDialog(null, newRoomPanel,
+						HC.EDITOR_NEW_ROOM_TTILE, JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					try {
+						roomName = roomNameField.getText();
+						roomDesc = roomDescriptionField.getText();
+						roomCode = roomCodeField.getText();
+						xdim = Integer.parseInt(xdimField.getText());
+						ydim = Integer.parseInt(ydimField.getText());
+
+						if (roomName.equals("")) {
+							JOptionPane.showMessageDialog(null,
+									HC.ROOM_EDITOR_MISSING_NAME);
+						}
+						else if (gameWorld.gameThings.containsKey(roomCode)) {
+							JOptionPane.showMessageDialog(null,
+									HC.EDITOR_CODE_TAKEN);
+						}
+						else if (xdim < 2 || xdim > 7 || ydim < 2 || ydim > 7) {
+							JOptionPane.showMessageDialog(null,
+									HC.ROOM_EDITOR_DIM_OUT_OF_BOUNDS);
+						}
+						else {
+							Room newRoom = new Room(gameWorld, roomName, roomDesc, roomCode, xdim, ydim);
+							roomOK = true;
+							updateRoomList();
+							editedRoom = newRoom;
+							RoomChart.setRoomChart(chartPane, newRoom);
+							updateObjectList(newRoom);
+						}
+					} catch (NumberFormatException e1) {
+						JOptionPane.showMessageDialog(null,
+								HC.ROOM_EDITOR_DIM_NOT_INT);
+					} catch (HeadlessException e1) {
+						e1.printStackTrace();
+					} catch (IllegalGameCodeException e1) {
+						JOptionPane.showMessageDialog(null,"GameCode ERROR");
+					} catch (WorldMakingConflict e1) {
+						e1.printStackTrace();//Not a problem
+					}
+				}
+				else {
+					roomOK = true;
+				}
+			} while (! roomOK);
+		};
+	}
+	
+	class EditRoom implements ActionListener { //TODO
 		JTextField roomNameField = new JTextField(0);
 		JTextField roomDescriptionField = new JTextField(0);
 		JTextField roomCodeField = new JTextField(0);
@@ -163,7 +264,6 @@ public class WorldEditor extends JFrame {
 			} while (! roomOK);
 		};
 	}
-	
 	
 	@SuppressWarnings("serial")
 	public class PositionSetter extends JFrame {
@@ -295,13 +395,21 @@ public class WorldEditor extends JFrame {
 		};
 	}
 
-	class RemoveObject implements ActionListener {
+	class RemoveThing implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			gameWorld.remove(chosenGameThing);
+			updateRoomList();
+			if (chosenGameThing == editedRoom) {
+				updateObjectList(null);
+			}
+			else {
+				updateObjectList(editedRoom);
+			}
 			
 		}	
 	}
+	
 	
 	public void updateRoomList() {
 		roomList = new JList(gameWorld.getRoomArrayForEditor());
@@ -473,28 +581,10 @@ public class WorldEditor extends JFrame {
 		}
 	}
 	
-	public WorldEditor() {
+	public WorldEditor(String lang) {
 		wegui = this;
-		gameWorld = new GameWorld("","eng");
-		/*
-		try {
-			
-			testRoom = new Room(gameWorld, "Makuuhuone", null, null, 7, 7);
-			new GameObject(gameWorld, "tuoli", null, null, testRoom, 0);
-			new GameObject(gameWorld, "pyötä", null, null, testRoom, 1);
-			new GameObject(gameWorld, "kirja", null, null, testRoom, 2);
-			new GameObject(gameWorld, "laukku", null, null, testRoom, 3);
-			Room otherRoom = new Room(gameWorld, "Toinen huone", null, null, 4, 4);
-			new GameObject(gameWorld, "hattu", null, null, otherRoom, 6);
-			
-		} catch (IllegalGameCodeException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (WorldMakingConflict e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		*/
+		gameWorld = new GameWorld("", lang);
+
 
 		setTitle("Huikon Haamu - World Editor - "+gameWorld.name);
 		setSize(1150,600);
@@ -515,9 +605,11 @@ public class WorldEditor extends JFrame {
 
 	    roomPopup = new JPopupMenu();
 	    roomPopupDelete = new JMenuItem("Delete");
+	    roomPopupDelete.addActionListener(new RemoveThing());
 	    roomPopup.add(roomPopupDelete);
 	    roomList = new JList();
 	    roomList.add(roomPopup);
+	   
 
 	    // Setting object directory
 	    objectListLabel = new JLabel(HC.EDITOR_OBJECT_LIST_LABEL);
@@ -529,19 +621,10 @@ public class WorldEditor extends JFrame {
 
 	    objectPopup = new JPopupMenu();
 	    objectPopupDelete = new JMenuItem("Delete");
-	    objectPopupDelete.addActionListener(new RemoveObject());
+	    objectPopupDelete.addActionListener(new RemoveThing());
 	    objectPopup.add(objectPopupDelete);
 	    objectList = new JList();
 	    objectList.add(objectPopup);
-	    
-	    objectPopupDelete.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	System.out.println(chosenGameThing.toString());
-		    	chosenGameThing.remove();
-		    	updateObjectList(editedRoom);
-		    	RoomChart.setRoomChart(chartPane, editedRoom);
-		    }
-	    });
 
 	    
 
@@ -585,7 +668,7 @@ public class WorldEditor extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new WorldEditor();
+		new WorldEditor("eng");
 	}
 
 }

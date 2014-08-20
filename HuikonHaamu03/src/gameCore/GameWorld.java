@@ -47,7 +47,7 @@ public class GameWorld {
 	}
 	
 	public void remove(GameThing thing) {
-		
+		thing.remove();
 	}
 	
 	/**Creates a text file named <saveName>.hhw that works as a save file for the current world.
@@ -65,7 +65,7 @@ public class GameWorld {
 		    writer = new BufferedWriter( new FileWriter(saveName+".hhw" ));
 		    //Header data:
 		    writer.write("Save file for a HuikonHaamu GameWorld\r");
-		    writer.write("HHversion:"+Double.toString(Game.gameVersion)+"\r");
+		    writer.write("HHversion:"+Game.gameVersion+"\r");
 		    writer.write(this.language+"\r");
 		    writer.write(this.name+":--------------------------------\r");
 		    

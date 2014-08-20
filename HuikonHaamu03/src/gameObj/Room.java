@@ -47,10 +47,6 @@ public class Room extends GameThing {
 		}
 	}
 	
-	protected Room(GameWorld gw)
-			throws IllegalGameCodeException, WorldMakingConflict {
-		super(gw, HC.ROOM_VOID_NAME, "", "void");
-	}
 
 
 	/**Tries to add a GameObject to the given position.*/
@@ -267,6 +263,16 @@ public class Room extends GameThing {
 
 	@Override
 	public void remove() {
+		for (int position=0; position<this.objectArray.length; position++) {
+			if (objectArray[position] != null) {
+				objectArray[position].putToVoid();
+			}
+		}
+		gw.gameThings.remove(this.code);
+		gw.roomMap.remove(this.code);
+		if (gw.startingRoom == this) {
+			gw.startingRoom = null;
+		}
 		
 	}
 

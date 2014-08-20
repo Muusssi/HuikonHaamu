@@ -18,6 +18,8 @@ public class RoomChart {
 	
 	public static void setRoomChart(JPanel panel, Room room) {
 		if (room == null) {
+			panel.remove(roomNameLabel);
+			panel.remove(chartPanel);
 			return;
 		}
 		GameObject[] objArr = room.objectArray;

@@ -23,6 +23,12 @@ public class GameObject extends GameThing {
 		this.position = position;
 		gw.objectMap.put(this.code, this);
 	}
+	
+	public void putToVoid() {
+		this.location.objectMap.remove(this.code);
+		this.location.objectArray[this.position] = null;
+		gw.thingsInVoid.put(this.code, this);
+	}
 
 	@Override
 	public void giveDescription(String description) {

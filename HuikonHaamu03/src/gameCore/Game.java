@@ -5,7 +5,7 @@ import gameObj.HC;
 public class Game {
 	
 	public static boolean debug = true;
-	public static double gameVersion = 0.3;
+	public static String gameVersion = "0.3.1";
 
 	public Game() {
 		// TODO Auto-generated constructor stub
