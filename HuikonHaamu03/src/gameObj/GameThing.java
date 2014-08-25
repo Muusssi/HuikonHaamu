@@ -5,9 +5,9 @@ import gameCore.GameWorld;
 
 public abstract class GameThing {
 	
-	protected String name;
-	protected String description;
-	protected String code;
+	public String name;
+	public String description;
+	public String code;
 	protected GameWorld gw;
 	
 	public String codePrefix;
@@ -122,6 +122,4 @@ public abstract class GameThing {
 	/**Return string that is used to represent the GameThing in the editor.*/
 	public abstract String getEditorInfo();
 
-	public String name() { return this.name; }
-	public String code() { return this.code; }
 }

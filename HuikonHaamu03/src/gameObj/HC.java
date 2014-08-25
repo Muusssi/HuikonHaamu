@@ -80,12 +80,16 @@ public class HC {
 		public static String EDITOR_ROOM_BUTTON_TEXT;
 		public static String EDITOR_ROOM_BUTTON_TOOLTIP;
 		public static String EDITOR_NEW_ROOM_TTILE;
+		public static String EDITOR_EDIT_ROOM_TITLE = "Edit room: ";
+		public static String EDITOR_NOT_EMPTY_ROOM_DIM_CHG = "You are trying to change dimensions of the room.\n\rIn order to do that the room has to be empty.\rDo you want to put everything to void?";
 
 		public static String EDITOR_OBJECT_LIST_LABEL;
 		public static String EDITOR_OBJECT_BUTTON_TEXT;
 		public static String EDITOR_OBJECT_BUTTON_TOOLTIP;
 		public static String EDITOR_OBJECT_POSITION_SETTER_TITLE;
+		public static String EDITOR_OBJECT_ROOM_FULL = "The room is already full.";
 		
+		public static String EDITOR_VOID_LIST_LABEL = "Void:";
 
 		public static String EDITOR_NAME_LABEL;
 		
@@ -110,6 +114,9 @@ public class HC {
 		public static String EDITOR_WORLD_NAME_LABEL = "World Name:";
 		public static String EDITOR_WORLD_NAME_TOOLTIP = "Give name for the game world you are making.";
 		public static String EDITOR_WORLD_NAME_TITLE = "New world name:";
+		
+		public static String EDITOR_POPUP_DELETE = "Delete";
+		public static String EDITOR_POPUP_EDIT = "Edit";
 		
 		
 	public static void HCinit(String lan) {

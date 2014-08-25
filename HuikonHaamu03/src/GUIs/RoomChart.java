@@ -31,9 +31,9 @@ public class RoomChart {
 		
 		String code = "";
 		if (Game.debug) {
-			code = room.code()+": ";
+			code = room.code+": ";
 		}
-		roomNameLabel.setText(code+room.name());
+		roomNameLabel.setText(code+room.name);
 		roomNameLabel.setBounds(0, 0, 200, 15);
 		panel.add(roomNameLabel);
 		
@@ -73,9 +73,9 @@ public class RoomChart {
 		
 		String code = "";
 		if (Game.debug) {
-			code = room.code()+": ";
+			code = room.code+": ";
 		}
-		roomNameLabel.setText(code+room.name());
+		roomNameLabel.setText(code+room.name);
 		roomNameLabel.setBounds(0, 0, 200, 15);
 		panel.add(roomNameLabel);
 		

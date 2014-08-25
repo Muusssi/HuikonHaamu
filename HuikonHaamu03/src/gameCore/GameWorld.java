@@ -28,7 +28,6 @@ public class GameWorld {
 	
 	public HashMap<String,Room> roomMap = new HashMap<String,Room>();
 	public Room startingRoom = null;
-	public Room voidRoom = null;
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
 	public HashMap<String,Passage> passageMap = new HashMap<String,Passage>();
 	
@@ -58,7 +57,7 @@ public class GameWorld {
 		}
 		Room unReachable = this.roomsConnected();
 		if (unReachable != null) { //TODO roomsConnected()
-			System.out.println("WARNING---Room:"+unReachable.name()+", "+unReachable.code()+" can not be reached from starting room.");
+			System.out.println("WARNING---Room:"+unReachable.name+", "+unReachable.code+" can not be reached from starting room.");
 		}
 		BufferedWriter writer = null;
 	    try {
@@ -120,9 +119,9 @@ public class GameWorld {
 		    //Header data:
 		    reader.readLine();//Header
 		    String line = reader.readLine(); //version info
-		    double version = 0;
+		    Game.gameVersion = "0.0.0";
 		    if (line.startsWith("HHversion:")) {
-		    	version = Double.parseDouble(line.split(":")[1]);
+		    	Game.gameVersion = line.split(":")[1];
 		    }
 		    else {
 		    	throw new CorruptedSaveLineException(line);
@@ -198,5 +197,17 @@ public class GameWorld {
 		}
 		return roomArray;
 	}
-
+	
+	public String[] getVoidObjectArrayForEditor() {
+		Iterator<GameThing> itr = this.thingsInVoid.values().iterator();
+		String[] objectArray = new String[this.thingsInVoid.size()];
+		int i = 0;
+		GameThing current;
+		while (itr.hasNext()) {
+			current = itr.next();
+			objectArray[i] = current.getEditorInfo();
+			i++;
+		}
+		return objectArray;
+	}
 }

@@ -60,7 +60,7 @@ public class CmdlineUI {
 		while (running) {
 			
 			Room currentRoom = gw.player.location;
-			System.out.println(currentRoom.name() + ":-----------------------");
+			System.out.println(currentRoom.name + ":-----------------------");
 			currentRoom.printRoom();
 			HashMap<String,GameThing> available = gw.player.getAvailableGameThings();
 			command = sc.nextLine().split(" ");

@@ -28,6 +28,7 @@ public class GameObject extends GameThing {
 		this.location.objectMap.remove(this.code);
 		this.location.objectArray[this.position] = null;
 		gw.thingsInVoid.put(this.code, this);
+		this.location = null;
 	}
 
 	@Override
@@ -102,8 +103,13 @@ public class GameObject extends GameThing {
 	public void remove() {
 		gw.gameThings.remove(this.code);
 		gw.objectMap.remove(this.code);
-		this.location.objectMap.remove(this.code);
-		this.location.objectArray[this.position] = null;
+		if (this.location != null) {
+			this.location.objectMap.remove(this.code);
+			this.location.objectArray[this.position] = null;
+		}
+		else {
+			gw.thingsInVoid.remove(this.code);
+		}
 	}
 
 }

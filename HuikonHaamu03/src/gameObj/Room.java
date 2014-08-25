@@ -34,7 +34,7 @@ public class Room extends GameThing {
 	public Room(GameWorld gw, String name, String description, String code, int xdim, int ydim)
 				throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code);
-		if ((3 > xdim && xdim > 9) && (3 > ydim && ydim > 9)) {
+		if (newDimOutOfBounds(xdim, ydim)) {
 			throw new WorldMakingConflict("New room dimensions out of range.");
 		}
 		this.xdim = xdim;
@@ -258,7 +258,7 @@ public class Room extends GameThing {
 
 	@Override
 	public String getEditorInfo() {
-		return this.code+": "+this.name+" - "+this.xdim+"x"+this.ydim;
+		return this.code+": Room: "+this.name+" - "+this.xdim+"x"+this.ydim;
 	}
 
 	@Override
@@ -273,7 +273,33 @@ public class Room extends GameThing {
 		if (gw.startingRoom == this) {
 			gw.startingRoom = null;
 		}
-		
+	}
+	
+	public boolean isFull() {
+		for (int pos=0; pos<this.objectArray.length; pos++) {
+			if (this.objectArray[pos] == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean newDimOutOfBounds(int newXdim, int newYdim) {
+		if (newXdim<2 || newXdim >9) {
+			return true;
+		}
+		if (newYdim<2 || newYdim >9) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void objectsToVoid() {
+		for (int pos=0;pos<this.objectArray.length;pos++) {
+			if (this.objectArray[pos] != null) {
+				this.objectArray[pos].putToVoid();
+			}
+		}
 	}
 
 }

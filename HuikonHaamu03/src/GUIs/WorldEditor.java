@@ -35,13 +35,22 @@ public class WorldEditor extends JFrame {
 	JList roomList;
 	JPopupMenu roomPopup;
     JMenuItem roomPopupDelete;
+    JMenuItem roomPopupEdit;
 	//Objectlist
 	JLabel objectListLabel;
 	JScrollPane objectListPane;
 	JList objectList;
 	JPopupMenu objectPopup;
     JMenuItem objectPopupDelete;
-	//chart
+    
+	//Voidlist
+	JLabel voidListLabel;
+	JScrollPane voidListPane;
+	JList voidList;
+	JPopupMenu voidPopup;
+    JMenuItem voidPopupDelete;
+    
+	//Chart
     JPanel chartPane = null;
     
     //Thing editing
@@ -63,7 +72,9 @@ public class WorldEditor extends JFrame {
 	
 	private void updateEditor() {
 		this.updateRoomList();
-		this.updateObjectList(null);
+		this.updateObjectList(editedRoom);
+		this.updateVoidList();
+		RoomChart.setRoomChart(chartPane, editedRoom);
 	}
 	
 	class AddRoom implements ActionListener {
@@ -77,6 +88,7 @@ public class WorldEditor extends JFrame {
 		String roomCode;
 		int xdim;
 		int ydim;
+		
 
 		public void actionPerformed(ActionEvent e) {
 			JLabel nameLabel = new JLabel(HC.EDITOR_NAME_LABEL);
@@ -145,8 +157,7 @@ public class WorldEditor extends JFrame {
 							roomOK = true;
 							updateRoomList();
 							editedRoom = newRoom;
-							RoomChart.setRoomChart(chartPane, newRoom);
-							updateObjectList(newRoom);
+							updateEditor();
 						}
 					} catch (NumberFormatException e1) {
 						JOptionPane.showMessageDialog(null,
@@ -166,7 +177,7 @@ public class WorldEditor extends JFrame {
 		};
 	}
 	
-	class EditRoom implements ActionListener { //TODO
+	class EditRoom implements ActionListener {
 		JTextField roomNameField = new JTextField(0);
 		JTextField roomDescriptionField = new JTextField(0);
 		JTextField roomCodeField = new JTextField(0);
@@ -194,13 +205,13 @@ public class WorldEditor extends JFrame {
 			JLabel ydimLabel = new JLabel(HC.ROOM_EDITOR_YDIM_LABEL);
 			ydimLabel.setToolTipText(HC.ROOM_EDITOR_YDIM_TOOLTIP);
 
+			roomNameField.setText(editedRoom.name);
+			roomDescriptionField.setText(editedRoom.description);
+			roomCodeField.setText(editedRoom.code);
+			xdimField.setText(Integer.toString(editedRoom.xdim));
+			ydimField.setText(Integer.toString(editedRoom.ydim));
+			
 			JPanel newRoomPanel = new JPanel();
-
-			roomNameField.setText("");
-			roomDescriptionField.setText(HC.ROOM_DESCRIPTION);
-			roomCodeField.setText(GameThing.getNextCode(gameWorld, "r"));
-			xdimField.setText("3");
-			ydimField.setText("3");
 
 			newRoomPanel.setLayout(new GridLayout(5,0));
 			newRoomPanel.add(nameLabel);
@@ -219,7 +230,7 @@ public class WorldEditor extends JFrame {
 
 			do {
 				int result = JOptionPane.showConfirmDialog(null, newRoomPanel,
-						HC.EDITOR_NEW_ROOM_TTILE, JOptionPane.OK_CANCEL_OPTION);
+						HC.EDITOR_EDIT_ROOM_TITLE+editedRoom.name, JOptionPane.OK_CANCEL_OPTION);
 				if (result == JOptionPane.OK_OPTION) {
 					try {
 						roomName = roomNameField.getText();
@@ -232,30 +243,42 @@ public class WorldEditor extends JFrame {
 							JOptionPane.showMessageDialog(null,
 									HC.ROOM_EDITOR_MISSING_NAME);
 						}
-						else if (gameWorld.gameThings.containsKey(roomCode)) {
+						else if (!editedRoom.code.equals(roomCode) && gameWorld.gameThings.containsKey(roomCode)) {
 							JOptionPane.showMessageDialog(null,
 									HC.EDITOR_CODE_TAKEN);
 						}
-						else if (xdim < 2 || xdim > 7 || ydim < 2 || ydim > 7) {
+						else if (editedRoom.newDimOutOfBounds(xdim, ydim)) {
 							JOptionPane.showMessageDialog(null,
 									HC.ROOM_EDITOR_DIM_OUT_OF_BOUNDS);
 						}
 						else {
-							Room newRoom = new Room(gameWorld, roomName, roomDesc, roomCode, xdim, ydim);
+							if (editedRoom.xdim != xdim || editedRoom.ydim != ydim) {
+								if (editedRoom.objectMap.isEmpty()) {
+									editedRoom.xdim = xdim;
+									editedRoom.ydim = ydim;
+								}
+								else {
+									JLabel objectsToVoidLabel = new JLabel(HC.EDITOR_NOT_EMPTY_ROOM_DIM_CHG);
+									int yes_no = JOptionPane.showConfirmDialog(null, objectsToVoidLabel,
+											null, JOptionPane.YES_NO_OPTION);
+									if (yes_no == JOptionPane.YES_OPTION) {
+										editedRoom.objectsToVoid();
+										editedRoom.xdim = xdim;
+										editedRoom.ydim = ydim;
+									}
+								}
+							}
+							editedRoom.name = roomName;
+							editedRoom.giveDescription(roomDesc);
+							
 							roomOK = true;
-							updateRoomList();
-							RoomChart.setRoomChart(chartPane, newRoom);
-							updateObjectList(newRoom);
+							updateEditor();
 						}
 					} catch (NumberFormatException e1) {
 						JOptionPane.showMessageDialog(null,
 								HC.ROOM_EDITOR_DIM_NOT_INT);
 					} catch (HeadlessException e1) {
 						e1.printStackTrace();
-					} catch (IllegalGameCodeException e1) {
-						JOptionPane.showMessageDialog(null,"GameCode ERROR");
-					} catch (WorldMakingConflict e1) {
-						e1.printStackTrace();//Not a problem
 					}
 				}
 				else {
@@ -279,9 +302,6 @@ public class WorldEditor extends JFrame {
 				JDialog dialog = optionpane.createDialog(null, HC.EDITOR_OBJECT_POSITION_SETTER_TITLE);
 				dialog.setSize(350, 350);
 				dialog.setVisible(true);
-		    	//result = JOptionPane.showConfirmDialog(null, positionPanel,
-				//		null, JOptionPane.OK_CANCEL_OPTION);
-				System.out.println("täh?");
 			} while (chosenPosition < 0);
 		}
 	}
@@ -295,10 +315,16 @@ public class WorldEditor extends JFrame {
 		String objectDesc;
 		String objectCode;
 		int position;
+		boolean toVoid = false;
 
 		public void actionPerformed(ActionEvent e) {
 			if (editedRoom == null) {
-				JOptionPane.showMessageDialog(null, HC.EDITOR_OBJECT_NO_ROOMS_ADDING);
+				//JOptionPane.showMessageDialog(null, HC.EDITOR_OBJECT_NO_ROOMS_ADDING);
+				//return;
+				toVoid = true;
+			}
+			else if (editedRoom.isFull()) {
+				JOptionPane.showMessageDialog(null, HC.EDITOR_OBJECT_ROOM_FULL);
 				return;
 			}
 			JLabel nameLabel = new JLabel(HC.EDITOR_NAME_LABEL);
@@ -328,10 +354,10 @@ public class WorldEditor extends JFrame {
 			newRoomPanel.add(objectDescriptionField);
 			newRoomPanel.add(codeLabel);
 			newRoomPanel.add(objectCodeField);
-
-			newRoomPanel.add(positionLabel);
-			newRoomPanel.add(positionField);
-
+			if (!toVoid) {
+				newRoomPanel.add(positionLabel);
+				newRoomPanel.add(positionField);
+			}
 			boolean roomOK = false;
 
 			do {
@@ -342,22 +368,23 @@ public class WorldEditor extends JFrame {
 				}
 				else {
 					result = JOptionPane.showConfirmDialog(null, newRoomPanel,
-							"New object in room "+editedRoom.code()+": "+editedRoom.name(), JOptionPane.OK_CANCEL_OPTION);
+							"New object in room "+editedRoom.code+": "+editedRoom.name, JOptionPane.OK_CANCEL_OPTION);
 				}	
 				if (result == JOptionPane.OK_OPTION) {
 					try {
 						objectName = objectNameField.getText();
 						objectDesc = objectDescriptionField.getText();
 						objectCode = objectCodeField.getText();
-						if (positionField.getText().equals("")) {
-							new PositionSetter();
-							position = chosenPosition;
-							positionField.setText(Integer.toString(position));
+						if (!toVoid) {
+							if (positionField.getText().equals("")) {
+								new PositionSetter();
+								position = chosenPosition;
+								positionField.setText(Integer.toString(position));
+							}
+							else {
+								position = Integer.parseInt(positionField.getText());
+							}
 						}
-						else {
-							position = Integer.parseInt(positionField.getText());
-						}
-						
 
 						if (objectName.equals("")) {
 							JOptionPane.showMessageDialog(null,
@@ -367,16 +394,14 @@ public class WorldEditor extends JFrame {
 							JOptionPane.showMessageDialog(null,
 									HC.EDITOR_CODE_TAKEN);
 						}
-						else if (position >= editedRoom.objectArray.length || editedRoom.objectArray[position] != null) {
+						else if (!toVoid && (position >= editedRoom.objectArray.length || editedRoom.objectArray[position] != null)) {
 							JOptionPane.showMessageDialog(null,
 									HC.OBJECT_EDITOR_POSITION_ILLEGAL);
 						}
 						else {
 							GameObject newObject = new GameObject(gameWorld, objectName, objectDesc, objectCode, editedRoom, position);
 							roomOK = true;
-							updateRoomList();
-							RoomChart.setRoomChart(chartPane, editedRoom);
-							updateObjectList(editedRoom);
+							updateEditor();
 						}
 					} catch (NumberFormatException e1) {
 						// NOT A PROBLEM
@@ -400,13 +425,11 @@ public class WorldEditor extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			gameWorld.remove(chosenGameThing);
 			updateRoomList();
+			updateVoidList();
 			if (chosenGameThing == editedRoom) {
-				updateObjectList(null);
+				editedRoom = null;
 			}
-			else {
-				updateObjectList(editedRoom);
-			}
-			
+			updateEditor();
 		}	
 	}
 	
@@ -435,8 +458,7 @@ public class WorldEditor extends JFrame {
 						Object o = theList.getModel().getElementAt(index);
 						String roomCode = o.toString().split(":")[0];
 						editedRoom = gameWorld.roomMap.get(roomCode);
-						RoomChart.setRoomChart(chartPane, editedRoom);
-						updateObjectList(editedRoom);
+						updateEditor();
 					}
 				}
 			}
@@ -446,9 +468,11 @@ public class WorldEditor extends JFrame {
 
 	public void updateObjectList(Room room) {
 		if (room == null) {
-			return;
+			objectList = new JList();
 		}
-		objectList = new JList(room.getObjectArrayForEditor());
+		else {
+			objectList = new JList(room.getObjectArrayForEditor());
+		}
 		objectListPane.getViewport().add(objectList);
 		editorPanel.add(objectListPane);
 		editedRoom = room;
@@ -470,6 +494,29 @@ public class WorldEditor extends JFrame {
 			}
 		};
 	    objectList.addMouseListener(mouseListener);
+    }
+	
+	public void updateVoidList() {
+		voidList = new JList(gameWorld.getVoidObjectArrayForEditor());
+		voidListPane.getViewport().add(voidList);
+		editorPanel.add(voidListPane);
+
+		// Adding a mouselistener for Room objects window, to examine right clicks
+		// and on which objects they were made
+		MouseListener mouseListener = new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				JList theList = (JList) mouseEvent.getSource();
+				if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+					int index = theList.locationToIndex(mouseEvent.getPoint());
+					if (index >= 0) {
+						String line = (String)theList.getModel().getElementAt(index);
+						chosenGameThing = gameWorld.gameThings.get(line.split(":")[0]);
+						voidPopup.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+					}
+				}
+			}
+		};
+	    voidList.addMouseListener(mouseListener);
     }
 
 	public void setWorldName() {
@@ -498,9 +545,9 @@ public class WorldEditor extends JFrame {
 		} while (!nameOK);
 	}
 	
+	
 	class Save implements ActionListener {
 		String saveName;
-		
 		public void actionPerformed(ActionEvent e) {
 			while (gameWorld.name.equals("")) {
 				setWorldName();
@@ -565,7 +612,6 @@ public class WorldEditor extends JFrame {
 							gameWorld = GameWorld.loadWorld(saveName+".hhw");
 							wegui.setTitle("World Editor - "+ gameWorld.name);		
 							updateEditor();
-							
 							loadOK = true;
 						}
 						else {
@@ -604,9 +650,12 @@ public class WorldEditor extends JFrame {
 	    editorPanel.add(roomListPane);
 
 	    roomPopup = new JPopupMenu();
-	    roomPopupDelete = new JMenuItem("Delete");
+	    roomPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
 	    roomPopupDelete.addActionListener(new RemoveThing());
 	    roomPopup.add(roomPopupDelete);
+	    roomPopupEdit = new JMenuItem(HC.EDITOR_POPUP_EDIT);
+	    roomPopupEdit.addActionListener(new EditRoom());
+	    roomPopup.add(roomPopupEdit);
 	    roomList = new JList();
 	    roomList.add(roomPopup);
 	   
@@ -620,12 +669,27 @@ public class WorldEditor extends JFrame {
 	    editorPanel.add(objectListPane);
 
 	    objectPopup = new JPopupMenu();
-	    objectPopupDelete = new JMenuItem("Delete");
+	    objectPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
 	    objectPopupDelete.addActionListener(new RemoveThing());
 	    objectPopup.add(objectPopupDelete);
 	    objectList = new JList();
 	    objectList.add(objectPopup);
+	    
+	    
+	    // Setting void directory
+	    voidListLabel = new JLabel(HC.EDITOR_VOID_LIST_LABEL);
+	    voidListLabel.setBounds(50,270,100,20);
+	    voidListPane = new JScrollPane();
+	    voidListPane.setBounds(50, 300, 200, 200);
+	    editorPanel.add(voidListLabel);
+	    editorPanel.add(voidListPane);
 
+	    voidPopup = new JPopupMenu();
+	    voidPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
+	    voidPopupDelete.addActionListener(new RemoveThing());
+	    voidPopup.add(voidPopupDelete);
+	    voidList = new JList();
+	    voidList.add(voidPopup);
 	    
 
 
@@ -662,8 +726,7 @@ public class WorldEditor extends JFrame {
 
 		//Setting room chart panel
 	    setChartPanel();
-		updateRoomList();
-		updateObjectList(editedRoom);
+	    updateEditor();
 		setVisible(true);
 	}
 

@@ -28,10 +28,10 @@ public class GameObjectButton extends JButton {
 		this.setBounds(xpos*30, ypos*30, 20, 20);
 		this.gameObject = gameObject;
 		if (Game.debug) {
-			this.setToolTipText(gameObject.position+": "+gameObject.code()+": "+gameObject.name());
+			this.setToolTipText(gameObject.position+": "+gameObject.code+": "+gameObject.name);
 		}
 		else {
-			this.setToolTipText(gameObject.name());
+			this.setToolTipText(gameObject.name);
 		}
 		this.chosenPosition = gameObject.position;
 		this.addActionListener(new PositionListener());
