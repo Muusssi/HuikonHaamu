@@ -119,9 +119,9 @@ public class GameWorld {
 		    //Header data:
 		    reader.readLine();//Header
 		    String line = reader.readLine(); //version info
-		    Game.gameVersion = "0.0.0";
+		    String saveVersion;
 		    if (line.startsWith("HHversion:")) {
-		    	Game.gameVersion = line.split(":")[1];
+		    	saveVersion = line.split(":")[1];
 		    }
 		    else {
 		    	throw new CorruptedSaveLineException(line);

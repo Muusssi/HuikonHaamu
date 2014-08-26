@@ -8,7 +8,7 @@ import gameExceptions.WorldMakingConflict;
 public class GameObject extends GameThing {
 	
 	public Room location = null;
-	public int position;
+	public int position = 0;
 	
 	public GameObject(GameWorld gw, String name, String description, String code, Room location, int position)
 			throws IllegalGameCodeException, WorldMakingConflict {
@@ -30,6 +30,12 @@ public class GameObject extends GameThing {
 		gw.thingsInVoid.put(this.code, this);
 		this.location = null;
 	}
+	
+	public void movePosition(int newPosition) {
+		this.location.objectArray[this.position] = null;
+		this.location.objectArray[newPosition] = this;
+		this.position = newPosition;
+	}
 
 	@Override
 	public void giveDescription(String description) {
@@ -42,8 +48,20 @@ public class GameObject extends GameThing {
 	}
 
 	@Override
-	public void changeCode(String newCode) throws IllegalGameCodeException {
-		// TODO Auto-generated method stub
+	public void changeCode(String newCode){
+		gw.gameThings.remove(this.code);
+		gw.gameThings.put(newCode, this);
+		gw.objectMap.remove(this.code);
+		gw.objectMap.put(newCode, this);
+		if (this.location != null) {
+			this.location.objectMap.remove(this.code);
+			this.location.objectMap.put(newCode, this);
+		}
+		else {// In Void
+			gw.thingsInVoid.remove(this.code);
+			gw.thingsInVoid.put(newCode, this);
+		}
+		this.code = newCode;
 	}
 
 	@Override

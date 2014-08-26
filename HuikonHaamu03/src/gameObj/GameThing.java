@@ -60,10 +60,8 @@ public abstract class GameThing {
 		return prefix+Integer.toString(codeCount);
 	}
 
-	/** Tries to change the GameThings code to the given newCode everywhere it is currently used.
-	 * Throws IllegalGameCodeException if unable to do that for some reason.
-	 * @throws IllegalGameCodeException */
-	public abstract void changeCode(String newCode) throws IllegalGameCodeException;
+	/** Tries to change the GameThings code to the given newCode everywhere it is currently used.*/
+	public abstract void changeCode(String newCode);
 	
 	/**Returns the String line that can be used to save and later recreate the GameThing.*/
 	public abstract String getSaveline();

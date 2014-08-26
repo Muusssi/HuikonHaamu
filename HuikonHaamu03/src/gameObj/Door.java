@@ -83,7 +83,7 @@ public class Door extends GameObject {
 
 
 	@Override
-	public void changeCode(String newCode) throws IllegalGameCodeException {
+	public void changeCode(String newCode) {
 		// TODO Auto-generated method stub
 	}
 	

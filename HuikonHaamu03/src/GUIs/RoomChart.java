@@ -13,13 +13,18 @@ import javax.swing.plaf.basic.BasicBorders;
 public class RoomChart {
 
 	private static final long serialVersionUID = 1L;
-	public static JPanel chartPanel = new JPanel();;
+	public static JPanel chartPanel = new JPanel();
 	public static JLabel roomNameLabel = new JLabel();
 	
 	public static void setRoomChart(JPanel panel, Room room) {
 		if (room == null) {
 			panel.remove(roomNameLabel);
 			panel.remove(chartPanel);
+			panel.repaint();
+			chartPanel = new JPanel();
+			roomNameLabel = new JLabel();
+			panel.add(chartPanel);
+			panel.add(roomNameLabel);
 			return;
 		}
 		GameObject[] objArr = room.objectArray;

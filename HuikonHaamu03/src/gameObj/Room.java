@@ -12,19 +12,6 @@ import gameExceptions.WorldMakingConflict;
 	
 public class Room extends GameThing {
 
-	/*Positions (0-76): if dim=7x7
-	 * Seven possible positions on each side starting from left North
-	 *    0  1  2  3  4  5  6 
-	 * 27 28 29 30 31 32 33 34 7
-	 * 26 35 36 37 38 39 40 41 8
-	 * 25 42 43 44 45 46 47 48 9
-	 * 24 49 50 51 52 53 54 55 10
-	 * 23 56 57 58 59 60 61 62 11
-	 * 22 63 64 65 66 67 68 69 12
-	 * 21 70 71 72 73 74 75 76 13
-	 *    20 19 18 17 16 15 14 
-	 *    */
-
 	public int xdim;
 	public int ydim;
 	public GameObject[] objectArray;
@@ -81,17 +68,12 @@ public class Room extends GameThing {
 
 
 	@Override
-	public void changeCode(String newCode) throws IllegalGameCodeException {
-		if (code == null || gw.gameThings.containsKey(newCode)) {
-			throw new IllegalGameCodeException(newCode);
-		}
-		else {
-			gw.gameThings.remove(this.code);
-			gw.roomMap.remove(this.code);
-			this.code = newCode;
-			gw.gameThings.put(newCode, this);
-			gw.roomMap.put(newCode, this);
-		}
+	public void changeCode(String newCode) {
+		gw.gameThings.remove(this.code);
+		gw.roomMap.remove(this.code);
+		this.code = newCode;
+		gw.gameThings.put(newCode, this);
+		gw.roomMap.put(newCode, this);
 	}
 	
 	/**Tries to change the rooms dimensions. TODO not implemented!*/

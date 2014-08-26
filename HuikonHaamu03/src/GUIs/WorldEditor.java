@@ -36,12 +36,14 @@ public class WorldEditor extends JFrame {
 	JPopupMenu roomPopup;
     JMenuItem roomPopupDelete;
     JMenuItem roomPopupEdit;
+    
 	//Objectlist
 	JLabel objectListLabel;
 	JScrollPane objectListPane;
 	JList objectList;
 	JPopupMenu objectPopup;
     JMenuItem objectPopupDelete;
+    JMenuItem objectPopupEdit;
     
 	//Voidlist
 	JLabel voidListLabel;
@@ -49,6 +51,7 @@ public class WorldEditor extends JFrame {
 	JList voidList;
 	JPopupMenu voidPopup;
     JMenuItem voidPopupDelete;
+    JMenuItem voidPopupEdit;
     
 	//Chart
     JPanel chartPane = null;
@@ -56,7 +59,7 @@ public class WorldEditor extends JFrame {
     //Thing editing
     Room editedRoom = null;
     static int chosenPosition;
-    static GameThing chosenGameThing;
+    static GameObject chosenGameObject;
 
 
 	GameWorld gameWorld;
@@ -270,7 +273,9 @@ public class WorldEditor extends JFrame {
 							}
 							editedRoom.name = roomName;
 							editedRoom.giveDescription(roomDesc);
-							
+							if (!editedRoom.code.equals(roomCode)) {
+								editedRoom.changeCode(roomCode);
+							}
 							roomOK = true;
 							updateEditor();
 						}
@@ -399,7 +404,7 @@ public class WorldEditor extends JFrame {
 									HC.OBJECT_EDITOR_POSITION_ILLEGAL);
 						}
 						else {
-							GameObject newObject = new GameObject(gameWorld, objectName, objectDesc, objectCode, editedRoom, position);
+							new GameObject(gameWorld, objectName, objectDesc, objectCode, editedRoom, position);
 							roomOK = true;
 							updateEditor();
 						}
@@ -419,16 +424,127 @@ public class WorldEditor extends JFrame {
 			} while (! roomOK);
 		};
 	}
+	
+	class EditObject implements ActionListener {//TODO Edit Object
+		JTextField objectNameField = new JTextField(0);
+		JTextField objectDescriptionField = new JTextField(0);
+		JTextField objectCodeField = new JTextField(0);
+		JTextField positionField = new JTextField(0);
+		String objectName;
+		String objectDesc;
+		String objectCode;
+		int position;
+		boolean toVoid = false;
 
-	class RemoveThing implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JLabel nameLabel = new JLabel(HC.EDITOR_NAME_LABEL);
+			nameLabel.setToolTipText(HC.OBJECT_EDITOR_NAME_TOOLTIP);
+
+			JLabel descLabel = new JLabel(HC.EDITOR_DESCRIPTION_LABEL);
+			descLabel.setToolTipText(HC.OBJECT_EDITOR_DESCRIPTION_TOOLTIP);
+
+			JLabel codeLabel = new JLabel(HC.EDITOR_CODE_LABEL);
+			codeLabel.setToolTipText(HC.EDITOR_CODE_TOOLTIP);
+
+			JLabel positionLabel = new JLabel(HC.OBJECT_EDITOR_POSITION_LABEL);
+			positionLabel.setToolTipText(HC.OBJECT_EDITOR_POSITION_TOOLTIP);
+			
+			
+			JPanel editObjectPanel = new JPanel();
+			
+			objectNameField.setText(chosenGameObject.name);
+			objectDescriptionField.setText(chosenGameObject.description);
+			objectCodeField.setText(chosenGameObject.code);
+			positionField.setText(Integer.toString(chosenGameObject.position));
+
+			editObjectPanel.setLayout(new GridLayout(5,0));
+			editObjectPanel.add(nameLabel);
+			editObjectPanel.add(objectNameField);
+			editObjectPanel.add(descLabel);
+			editObjectPanel.add(objectDescriptionField);
+			editObjectPanel.add(codeLabel);
+			editObjectPanel.add(objectCodeField);
+			boolean roomOK = false;
+			boolean inVoid = true;
+			if (chosenGameObject.location != null) {
+				editObjectPanel.add(positionLabel);
+				editObjectPanel.add(positionField);
+				inVoid = false;
+			}
+			do {
+				int result;
+				result = JOptionPane.showConfirmDialog(null, editObjectPanel,
+						chosenGameObject.name, JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					try {
+						objectName = objectNameField.getText();
+						objectDesc = objectDescriptionField.getText();
+						objectCode = objectCodeField.getText();
+						if (positionField.getText().equals("")) {
+							new PositionSetter();
+							position = chosenPosition;
+							positionField.setText(Integer.toString(position));
+						}
+						else {
+							position = Integer.parseInt(positionField.getText());
+						}
+					
+						if (objectName.equals("")) {
+							JOptionPane.showMessageDialog(null,
+									HC.OBJECT_EDITOR_MISSING_NAME);
+						}
+						else if (!objectCode.equals(chosenGameObject.code) && gameWorld.gameThings.containsKey(objectCode)) {
+							JOptionPane.showMessageDialog(null,
+									HC.EDITOR_CODE_TAKEN);
+						}
+						else if (!inVoid && (position >= editedRoom.objectArray.length 
+								|| (chosenGameObject.position != position && editedRoom.objectArray[position] != null))) {
+							JOptionPane.showMessageDialog(null,
+									HC.OBJECT_EDITOR_POSITION_ILLEGAL);
+						}
+						else {
+							chosenGameObject.name = objectName;
+							chosenGameObject.giveDescription(objectDesc);
+							if (!objectCode.equals(chosenGameObject.code)) {
+								chosenGameObject.changeCode(objectCode);
+							}
+							if (!inVoid) {
+								chosenGameObject.movePosition(position);
+								editedRoom = chosenGameObject.location;
+							}
+							roomOK = true;
+							updateEditor();
+						}
+					} catch (NumberFormatException e1) {
+						// NOT A PROBLEM
+					} catch (HeadlessException e1) {
+						e1.printStackTrace();
+					}
+				}
+				else {
+					roomOK = true;
+				}
+			} while (! roomOK);
+		};
+	}
+
+	class RemoveObject implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			gameWorld.remove(chosenGameThing);
+			gameWorld.remove(chosenGameObject);
 			updateRoomList();
 			updateVoidList();
-			if (chosenGameThing == editedRoom) {
-				editedRoom = null;
-			}
+			updateEditor();
+		}	
+	}
+	
+	class RemoveRoom implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			gameWorld.remove(editedRoom);
+			editedRoom = null;
+			updateRoomList();
+			updateVoidList();
 			updateEditor();
 		}	
 	}
@@ -448,7 +564,7 @@ public class WorldEditor extends JFrame {
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					if (index >= 0) {
 						String o = (String) theList.getModel().getElementAt(index);
-						chosenGameThing = gameWorld.gameThings.get(o.split(":")[0]);
+						editedRoom = (Room)gameWorld.gameThings.get(o.split(":")[0]);
 						roomPopup.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
 					}
 				}
@@ -486,7 +602,7 @@ public class WorldEditor extends JFrame {
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					if (index >= 0) {
 						String line = (String)theList.getModel().getElementAt(index);
-						chosenGameThing = gameWorld.gameThings.get(line.split(":")[0]);
+						chosenGameObject = (GameObject)gameWorld.gameThings.get(line.split(":")[0]);
 						objectPopup.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
 						
 					}
@@ -510,7 +626,7 @@ public class WorldEditor extends JFrame {
 					int index = theList.locationToIndex(mouseEvent.getPoint());
 					if (index >= 0) {
 						String line = (String)theList.getModel().getElementAt(index);
-						chosenGameThing = gameWorld.gameThings.get(line.split(":")[0]);
+						chosenGameObject = (GameObject)gameWorld.gameThings.get(line.split(":")[0]);
 						voidPopup.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
 					}
 				}
@@ -651,7 +767,7 @@ public class WorldEditor extends JFrame {
 
 	    roomPopup = new JPopupMenu();
 	    roomPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
-	    roomPopupDelete.addActionListener(new RemoveThing());
+	    roomPopupDelete.addActionListener(new RemoveRoom());
 	    roomPopup.add(roomPopupDelete);
 	    roomPopupEdit = new JMenuItem(HC.EDITOR_POPUP_EDIT);
 	    roomPopupEdit.addActionListener(new EditRoom());
@@ -670,8 +786,11 @@ public class WorldEditor extends JFrame {
 
 	    objectPopup = new JPopupMenu();
 	    objectPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
-	    objectPopupDelete.addActionListener(new RemoveThing());
+	    objectPopupDelete.addActionListener(new RemoveObject());
 	    objectPopup.add(objectPopupDelete);
+	    objectPopupEdit = new JMenuItem(HC.EDITOR_POPUP_EDIT);
+	    objectPopupEdit.addActionListener(new EditObject());
+	    objectPopup.add(objectPopupEdit);
 	    objectList = new JList();
 	    objectList.add(objectPopup);
 	    
@@ -686,8 +805,11 @@ public class WorldEditor extends JFrame {
 
 	    voidPopup = new JPopupMenu();
 	    voidPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
-	    voidPopupDelete.addActionListener(new RemoveThing());
+	    voidPopupDelete.addActionListener(new RemoveObject());
 	    voidPopup.add(voidPopupDelete);
+	    voidPopupEdit = new JMenuItem(HC.EDITOR_POPUP_EDIT);
+	    voidPopupEdit.addActionListener(new EditObject());
+	    voidPopup.add(voidPopupEdit);
 	    voidList = new JList();
 	    voidList.add(voidPopup);
 	    
