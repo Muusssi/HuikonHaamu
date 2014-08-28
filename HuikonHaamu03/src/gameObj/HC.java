@@ -50,9 +50,16 @@ public class HC {
 		public static String OBJECT_EDITOR_POSITION_ILLEGAL;
 		public static String EDITOR_OBJECT_NO_ROOMS_ADDING;
 		
+		public static String OBJECT_EDITOR_TOVOID_LABEL = "Put to Void:";
+		public static String OBJECT_EDITOR_TOVOID_TOOLTIP = "If you check this check box the object will be added to void and to the selected room.";
+		
+		public static String OBJECT_EDITOR_DOOR_LABEL = "A door:";
+		public static String OBJECT_EDITOR_DOOR_TOOLTIP = "If you check this check box the new object will become a door.";
+		
 	//Door
 		public static String DOOR_DESCRIPTION;
-		public static String DOOR_NO_PASSAGE;
+		
+		public static String DOOR_NO_PASSAGE = "This door goes nowhere.";
 		public static String DOOR_GO_NO_PASSAGE;
 		public static String DOOR_OPEN_CLOSED;
 		public static String DOOR_OPEN_OPENED;
@@ -60,6 +67,8 @@ public class HC {
 		public static String DOOR_CLOSE_OPENED;
 		public static String DOOR_GO_CLOSED;
 		public static String DOOR_GO_OPENED;
+		
+		//public static String 
 	
 	//CommandLineUI
 		public static String GO;
@@ -81,13 +90,16 @@ public class HC {
 		public static String EDITOR_ROOM_BUTTON_TOOLTIP;
 		public static String EDITOR_NEW_ROOM_TTILE;
 		public static String EDITOR_EDIT_ROOM_TITLE = "Edit room: ";
-		public static String EDITOR_NOT_EMPTY_ROOM_DIM_CHG = "You are trying to change dimensions of the room.\n\rIn order to do that the room has to be empty.\rDo you want to put everything to void?";
+		public static String EDITOR_NOT_EMPTY_ROOM_DIM_CHG = "You are trying to change dimensions of the room. In order to do that the room has to be empty. Do you want to put everything to void?";
 
 		public static String EDITOR_OBJECT_LIST_LABEL;
 		public static String EDITOR_OBJECT_BUTTON_TEXT;
 		public static String EDITOR_OBJECT_BUTTON_TOOLTIP;
 		public static String EDITOR_OBJECT_POSITION_SETTER_TITLE;
-		public static String EDITOR_OBJECT_ROOM_FULL = "The room is already full.";
+		public static String EDITOR_OBJECT_ROOM_FULL = "The room is already full. You have to remove some object to make room for the new object.";
+		
+		public static String EDITOR_DOOR_BUTTON_TEXT = "Door";
+		public static String EDITOR_DOOR_BUTTON_TOOLTIP = "Add a new door. Doors are objects that can be linked to other doors.";
 		
 		public static String EDITOR_VOID_LIST_LABEL = "Void:";
 
@@ -117,7 +129,10 @@ public class HC {
 		
 		public static String EDITOR_POPUP_DELETE = "Delete";
 		public static String EDITOR_POPUP_EDIT = "Edit";
+		public static String EDITOR_POPUP_MOVE  = "Move";
+		public static String EDITOR_POPUP_MOVE_TO_VOID = "Move to void";
 		
+		public static String EDITOR_MOVE_CHOOSE_ROOM_TITLE = "Choose the new room:";
 		
 	public static void HCinit(String lan) {
 		lang = lan;
@@ -173,6 +188,8 @@ public class HC {
 			DOOR_CLOSE_OPENED = "You close the door.";
 			DOOR_GO_CLOSED = "This door is closed.";
 			DOOR_GO_OPENED = "You go through the door.";
+			
+			
 			
 			//CommandLineUI
 			GO = "go";

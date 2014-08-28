@@ -15,7 +15,6 @@ public class Door extends GameObject {
 				Room location, int position)
 						throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code, location, position);
-		
 	}
 	
 	public void linkTo(Door otherDoor, boolean closed) throws WorldMakingConflict {
@@ -34,7 +33,7 @@ public class Door extends GameObject {
 	
 	public void open() {
 		if (this.passage == null) {
-			gw.game.actionResponse(HC.DOOR_OPEN_CLOSED);
+			gw.game.actionResponse(HC.DOOR_NO_PASSAGE);
 		}
 		else if (this.passage.closed) {
 			this.passage.closed = false;
@@ -46,6 +45,7 @@ public class Door extends GameObject {
 	}
 	
 	public void close() {
+		
 		if (this.passage.closed) {
 			gw.game.actionResponse(HC.DOOR_CLOSE_CLOSED);
 		}
@@ -80,12 +80,6 @@ public class Door extends GameObject {
 		}
 	}
 
-
-
-	@Override
-	public void changeCode(String newCode) {
-		// TODO Auto-generated method stub
-	}
 	
 	
 	@Override
@@ -97,8 +91,15 @@ public class Door extends GameObject {
 	public String getSaveline() { //TODO
 		/* Door::<name>::<code>::<description>::
 		 * <roomCode>::<position>::*/
+		String roomString;
+		if (this.location == null) {
+			roomString = "null";
+		}
+		else {
+			roomString = this.location.code;
+		}
 		return "Door::"+this.name+"::"+this.code+"::"+this.description+"::"+
-				this.location.code+"::"+Integer.toString(this.position)+"::\r";
+				roomString+"::"+Integer.toString(this.position)+"::\r";
 
 	}
 	

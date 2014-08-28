@@ -78,7 +78,9 @@ public class Room extends GameThing {
 	
 	/**Tries to change the rooms dimensions. TODO not implemented!*/
 	public void changeDimensions(int newXdim, int newYdim) {
-		
+		this.xdim = newXdim;
+		this.ydim = newYdim;
+		this.objectArray = new GameObject[newXdim*newYdim];
 	}
 	
 	@Override
