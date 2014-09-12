@@ -38,9 +38,17 @@ public class Room extends GameThing {
 
 	/**Tries to add a GameObject to the given position.*/
 	public void putObject(GameObject newGameObject, int position) throws WorldMakingConflict {
+		if (newGameObject.location != null) {
+			newGameObject.location.objectMap.remove(this.code);
+			newGameObject.location.objectArray[newGameObject.position] = null;
+		}
+		else {
+			gw.thingsInVoid.remove(newGameObject.code);
+		}
 		if (objectArray[position] == null) {
 			objectArray[position] = newGameObject;
 			objectMap.put(newGameObject.code, newGameObject);
+			newGameObject.position = position;
 		}
 		else {
 			throw new WorldMakingConflict("Object position "+Integer.toString(position)+" already taken.");

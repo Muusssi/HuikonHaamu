@@ -46,6 +46,7 @@ public class WorldEditor extends JFrame {
     JMenuItem objectPopupEdit;
     JMenuItem objectPopupMoveToVoid;
     JMenuItem objectPopupMove;
+    JMenuItem objectPopupLinkDoor;
     
 	//Voidlist
 	JLabel voidListLabel;
@@ -299,7 +300,6 @@ public class WorldEditor extends JFrame {
 	
 	@SuppressWarnings("serial")
 	public class PositionSetter extends JFrame {
-		
 		public PositionSetter() {
 			JPanel positionPanel = new JPanel();
 			positionPanel.setLayout(null);
@@ -601,24 +601,59 @@ public class WorldEditor extends JFrame {
 	
 	
 	
-	class MoveObject implements ActionListener {//TODO combobox not working
-
+	class MoveObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
-			JComboBox combo = new JComboBox();
 			String[] roomArray = gameWorld.getRoomArrayForEditor();
-			for (int i=0;i<roomArray.length;i++) {
-				combo.add(new JMenuItem(roomArray[i]));
+			if (roomArray.length != 0) {
+				JComboBox combo = new JComboBox(roomArray);
+				int result;
+				result = JOptionPane.showConfirmDialog(null, combo,
+						HC.EDITOR_MOVE_CHOOSE_ROOM_TITLE,
+						JOptionPane.OK_CANCEL_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					editedRoom = gameWorld.roomMap.get(((String) combo
+							.getSelectedItem()).split(":")[0]);
+					new PositionSetter();
+					try {
+						editedRoom.putObject(chosenGameObject, chosenPosition);
+					} catch (WorldMakingConflict e1) {
+						e1.printStackTrace();
+					}
+					updateEditor();
+				}
+				updateEditor();
 			}
-			combo.add(new JMenuItem("void"));
+		};
+	}
+	
+	class LinkDoor implements ActionListener {//TODO
+		public void actionPerformed(ActionEvent e) {
+			if (chosenGameObject instanceof Door ) {
+				System.out.println("Linking...");
+			}
+			/*
+			String[] roomArray = gameWorld.getRoomArrayForEditor();
+			System.out.println("rooms: " + roomArray.length);
+			JComboBox combo = new JComboBox(roomArray);
+
 			int result;
 			result = JOptionPane.showConfirmDialog(null, combo,
 					HC.EDITOR_MOVE_CHOOSE_ROOM_TITLE, JOptionPane.OK_CANCEL_OPTION);
 			if (result == JOptionPane.OK_OPTION) {
-				
+				editedRoom = gameWorld.roomMap.get(((String) combo.getSelectedItem()).split(":")[0]);
+				new PositionSetter();
+				try {
+					editedRoom.putObject(chosenGameObject, chosenPosition);
+				} catch (WorldMakingConflict e1) {
+					e1.printStackTrace();
+				}
+				updateEditor();
 			}
+			*/
+			updateEditor();
 		};
 	}
+	
 	
 	class EditObject implements ActionListener {
 		JTextField objectNameField = new JTextField(0);
@@ -1002,6 +1037,11 @@ public class WorldEditor extends JFrame {
 	    objectPopupMove = new JMenuItem(HC.EDITOR_POPUP_MOVE);
 	    objectPopupMove.addActionListener(new MoveObject());
 	    objectPopup.add(objectPopupMove);
+	    /*
+	    objectPopupLinkDoor = new JMenuItem(HC.EDITOR_POPUP_LINK_DOOR);
+	    objectPopupLinkDoor.addActionListener(new LinkDoor());
+	    objectPopup.add(objectPopupLinkDoor);
+	    */
 	    objectList = new JList();
 	    objectList.add(objectPopup);
 	    
