@@ -29,7 +29,9 @@ public class GameWorld {
 	public HashMap<String,Room> roomMap = new HashMap<String,Room>();
 	public Room startingRoom = null;
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
+	public HashMap<String,Door> unlinkedDoorMap = new HashMap<String,Door>();
 	public HashMap<String,Passage> passageMap = new HashMap<String,Passage>();
+	
 	
 	public GameWorld(String name, String language) {
 		this.name = name;
@@ -196,6 +198,19 @@ public class GameWorld {
 			i++;
 		}
 		return roomArray;
+	}
+	
+	public String[] getUnlinkedDoorArrayForEditor() {
+		Iterator<Door> itr = this.unlinkedDoorMap.values().iterator();
+		String[] doorArray = new String[this.unlinkedDoorMap.size()];
+		int i = 0;
+		Door current;
+		while (itr.hasNext()) {
+			current = itr.next();
+			doorArray[i] = current.getEditorInfo();
+			i++;
+		}
+		return doorArray;
 	}
 	
 	public String[] getVoidObjectArrayForEditor() {

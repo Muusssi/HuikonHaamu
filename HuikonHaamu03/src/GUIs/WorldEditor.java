@@ -626,30 +626,33 @@ public class WorldEditor extends JFrame {
 		};
 	}
 	
-	class LinkDoor implements ActionListener {//TODO
+	class LinkDoor implements ActionListener {//TODO jfbsdk
 		public void actionPerformed(ActionEvent e) {
-			if (chosenGameObject instanceof Door ) {
+			if (chosenGameObject instanceof Door) {
 				System.out.println("Linking...");
-			}
-			/*
-			String[] roomArray = gameWorld.getRoomArrayForEditor();
-			System.out.println("rooms: " + roomArray.length);
-			JComboBox combo = new JComboBox(roomArray);
-
-			int result;
-			result = JOptionPane.showConfirmDialog(null, combo,
-					HC.EDITOR_MOVE_CHOOSE_ROOM_TITLE, JOptionPane.OK_CANCEL_OPTION);
-			if (result == JOptionPane.OK_OPTION) {
-				editedRoom = gameWorld.roomMap.get(((String) combo.getSelectedItem()).split(":")[0]);
-				new PositionSetter();
-				try {
-					editedRoom.putObject(chosenGameObject, chosenPosition);
-				} catch (WorldMakingConflict e1) {
-					e1.printStackTrace();
+				String[] doorArray = gameWorld.getUnlinkedDoorArrayForEditor();
+				if (doorArray.length > 1) {
+					JComboBox combo = new JComboBox(doorArray);
+					JCheckBox closedBox = new JCheckBox();
+					closedBox.setSelected(false);
+					JPanel panel = new JPanel();
+					panel.setLayout(new GridLayout(2,1));
+					panel.add(combo);
+					panel.add(closedBox);
+					int result;
+					result = JOptionPane.showConfirmDialog(null, panel,
+							HC.EDITOR_DOOR_LINK_DOOR_TITLE, JOptionPane.OK_CANCEL_OPTION);
+					if (result == JOptionPane.OK_OPTION) {
+						Door otherDoor = gameWorld.unlinkedDoorMap.get(((String) combo.getSelectedItem()).split(":")[0]);
+						try {
+							otherDoor.linkTo((Door)chosenGameObject, closedBox.isSelected());
+						} catch (WorldMakingConflict e1) {
+							e1.printStackTrace();
+						}
+					}
 				}
-				updateEditor();
+				
 			}
-			*/
 			updateEditor();
 		};
 	}
@@ -1037,11 +1040,9 @@ public class WorldEditor extends JFrame {
 	    objectPopupMove = new JMenuItem(HC.EDITOR_POPUP_MOVE);
 	    objectPopupMove.addActionListener(new MoveObject());
 	    objectPopup.add(objectPopupMove);
-	    /*
 	    objectPopupLinkDoor = new JMenuItem(HC.EDITOR_POPUP_LINK_DOOR);
 	    objectPopupLinkDoor.addActionListener(new LinkDoor());
 	    objectPopup.add(objectPopupLinkDoor);
-	    */
 	    objectList = new JList();
 	    objectList.add(objectPopup);
 	    

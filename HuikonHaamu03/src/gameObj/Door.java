@@ -15,10 +15,11 @@ public class Door extends GameObject {
 				Room location, int position)
 						throws IllegalGameCodeException, WorldMakingConflict {
 		super(gw, name, description, code, location, position);
+		gw.unlinkedDoorMap.put(this.code, this);
 	}
 	
 	public void linkTo(Door otherDoor, boolean closed) throws WorldMakingConflict {
-		if (this.passage == null || otherDoor.passage == null) {
+		if (this.passage != null || otherDoor.passage != null) {
 			throw new WorldMakingConflict("Door already linked.");
 		}
 		else {
@@ -30,6 +31,7 @@ public class Door extends GameObject {
 			}
 		}
 	}
+	
 	
 	public void open() {
 		if (this.passage == null) {
@@ -134,9 +136,33 @@ public class Door extends GameObject {
 			return this.code+": "+this.name+" -unlinked Door";
 		}
 		else {
-			return this.code+": "+this.name+" -linked Door";
+			if (this.passage.door1 == this) {
+				return this.code+": "+this.name+" -Door linked to "
+						+this.passage.door2.code;
+			}
+			else {
+				return this.code+": "+this.name+" -Door linked to "
+						+this.passage.door1.code;
+			}
+			
 		}
 
+	}
+	
+	@Override
+	public void remove() {
+		gw.gameThings.remove(this.code);
+		gw.objectMap.remove(this.code);
+		if (gw.unlinkedDoorMap.containsKey(this.code)) {
+			gw.unlinkedDoorMap.remove(this.code);
+		}
+		if (this.location != null) {
+			this.location.objectMap.remove(this.code);
+			this.location.objectArray[this.position] = null;
+		}
+		else {
+			gw.thingsInVoid.remove(this.code);
+		}
 	}
 	
 }

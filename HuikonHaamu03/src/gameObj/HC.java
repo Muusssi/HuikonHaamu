@@ -100,6 +100,7 @@ public class HC {
 		
 		public static String EDITOR_DOOR_BUTTON_TEXT = "Door";
 		public static String EDITOR_DOOR_BUTTON_TOOLTIP = "Add a new door. Doors are objects that can be linked to other doors.";
+		public static String EDITOR_DOOR_LINK_DOOR_TITLE = "Unlinked doors:";
 		
 		public static String EDITOR_VOID_LIST_LABEL = "Void:";
 
