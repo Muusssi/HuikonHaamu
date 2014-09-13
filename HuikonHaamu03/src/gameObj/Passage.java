@@ -18,10 +18,14 @@ public class Passage extends GameThing {
 		this.door1 = door1;
 		this.door1.passage = this;
 		this.room1 = door1.location;
+		gw.unlinkedDoorMap.remove(door1.code);
 		
 		this.door2 = door2;
 		this.door2.passage = this;
 		this.room2 = door2.location;
+		if (door1 != door2) {
+			gw.unlinkedDoorMap.remove(door2.code);
+		}
 		
 		this.closed = closed;
 		this.gw.passageMap.put(this.code, this);
@@ -35,7 +39,6 @@ public class Passage extends GameThing {
 	@Override
 	public void changeCode(String newCode) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -90,8 +93,14 @@ public class Passage extends GameThing {
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		this.door1.passage = null;
+		this.door2.passage = null;
+		gw.unlinkedDoorMap.put(this.door1.code, this.door1);
+		if (this.door1 != this.door2) {
+			gw.unlinkedDoorMap.put(this.door2.code, this.door2);
+		}
+		gw.passageMap.remove(this.code);
+		gw.gameThings.remove(this.code);
 	}
 
 }

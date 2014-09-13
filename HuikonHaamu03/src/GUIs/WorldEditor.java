@@ -47,6 +47,7 @@ public class WorldEditor extends JFrame {
     JMenuItem objectPopupMoveToVoid;
     JMenuItem objectPopupMove;
     JMenuItem objectPopupLinkDoor;
+    JMenuItem objectPopupUnLinkDoor;
     
 	//Voidlist
 	JLabel voidListLabel;
@@ -56,6 +57,7 @@ public class WorldEditor extends JFrame {
     JMenuItem voidPopupDelete;
     JMenuItem voidPopupEdit;
     JMenuItem voidPopupMove;
+    JMenuItem voidPopupUnLinkDoor;
     
 	//Chart
     JPanel chartPane = null;
@@ -629,7 +631,9 @@ public class WorldEditor extends JFrame {
 	class LinkDoor implements ActionListener {//TODO jfbsdk
 		public void actionPerformed(ActionEvent e) {
 			if (chosenGameObject instanceof Door) {
-				System.out.println("Linking...");
+				if (((Door) chosenGameObject).passage != null) {
+					return;
+				}
 				String[] doorArray = gameWorld.getUnlinkedDoorArrayForEditor();
 				if (doorArray.length > 1) {
 					JComboBox combo = new JComboBox(doorArray);
@@ -654,6 +658,15 @@ public class WorldEditor extends JFrame {
 				
 			}
 			updateEditor();
+		};
+	}
+	
+	class UnLinkDoor implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			if (chosenGameObject instanceof Door) {
+				((Door)chosenGameObject).unlinkDoor();
+				updateEditor();
+			}
 		};
 	}
 	
@@ -1043,6 +1056,9 @@ public class WorldEditor extends JFrame {
 	    objectPopupLinkDoor = new JMenuItem(HC.EDITOR_POPUP_LINK_DOOR);
 	    objectPopupLinkDoor.addActionListener(new LinkDoor());
 	    objectPopup.add(objectPopupLinkDoor);
+	    objectPopupUnLinkDoor = new JMenuItem(HC.EDITOR_POPUP_UNLINK_DOOR);
+	    objectPopupUnLinkDoor.addActionListener(new UnLinkDoor());
+	    objectPopup.add(objectPopupUnLinkDoor);
 	    objectList = new JList();
 	    objectList.add(objectPopup);
 	    
@@ -1065,6 +1081,9 @@ public class WorldEditor extends JFrame {
 	    voidPopupMove = new JMenuItem(HC.EDITOR_POPUP_MOVE);
 	    voidPopupMove.addActionListener(new MoveObject());
 	    voidPopup.add(voidPopupMove);
+	    voidPopupUnLinkDoor = new JMenuItem(HC.EDITOR_POPUP_UNLINK_DOOR);
+	    voidPopupUnLinkDoor.addActionListener(new UnLinkDoor());
+	    voidPopup.add(voidPopupUnLinkDoor);
 	    voidList = new JList();
 	    voidList.add(voidPopup);
 	    

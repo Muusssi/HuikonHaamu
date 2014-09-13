@@ -133,6 +133,7 @@ public class HC {
 		public static String EDITOR_POPUP_MOVE  = "Move";
 		public static String EDITOR_POPUP_MOVE_TO_VOID = "Move to void";
 		public static String EDITOR_POPUP_LINK_DOOR = "Link door";
+		public static String EDITOR_POPUP_UNLINK_DOOR = "Unlink door";
 
 		
 		public static String EDITOR_MOVE_CHOOSE_ROOM_TITLE = "Choose the new room:";

@@ -32,6 +32,12 @@ public class Door extends GameObject {
 		}
 	}
 	
+	public void unlinkDoor() {
+		if (this.passage != null) {
+			this.passage.remove();
+		}
+	}
+	
 	
 	public void open() {
 		if (this.passage == null) {
@@ -153,6 +159,9 @@ public class Door extends GameObject {
 	public void remove() {
 		gw.gameThings.remove(this.code);
 		gw.objectMap.remove(this.code);
+		if (this.passage != null) {
+			this.passage.remove();
+		}
 		if (gw.unlinkedDoorMap.containsKey(this.code)) {
 			gw.unlinkedDoorMap.remove(this.code);
 		}
