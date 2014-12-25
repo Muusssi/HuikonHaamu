@@ -628,7 +628,7 @@ public class WorldEditor extends JFrame {
 		};
 	}
 	
-	class LinkDoor implements ActionListener {//TODO jfbsdk
+	class LinkDoor implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if (chosenGameObject instanceof Door) {
 				if (((Door) chosenGameObject).passage != null) {

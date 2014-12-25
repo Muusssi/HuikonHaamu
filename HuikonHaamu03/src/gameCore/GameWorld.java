@@ -8,8 +8,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.ListModel;
+
+import quests.Quest;
+import quests.Mission;
 
 import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
@@ -31,6 +35,9 @@ public class GameWorld {
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
 	public HashMap<String,Door> unlinkedDoorMap = new HashMap<String,Door>();
 	public HashMap<String,Passage> passageMap = new HashMap<String,Passage>();
+	
+	public LinkedList<Quest> activeQuests = new LinkedList<Quest>();
+	public LinkedList<Mission> activeMissions = new LinkedList<Mission>();
 	
 	
 	public GameWorld(String name, String language) {
@@ -57,7 +64,7 @@ public class GameWorld {
 		if (saveName == null) {
 			saveName = this.name;
 		}
-		Room unReachable = this.roomsConnected();
+		Room unReachable = roomsConnected();
 		if (unReachable != null) { //TODO roomsConnected()
 			System.out.println("WARNING---Room:"+unReachable.name+", "+unReachable.code+" can not be reached from starting room.");
 		}

@@ -16,6 +16,7 @@ public class Room extends GameThing {
 	public int ydim;
 	public GameObject[] objectArray;
 	public HashMap<String,GameObject> objectMap = new HashMap<String,GameObject>();
+	public boolean visited = false;
 
 
 	public Room(GameWorld gw, String name, String description, String code, int xdim, int ydim)

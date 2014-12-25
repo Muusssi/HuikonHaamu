@@ -6,9 +6,10 @@ public class Game {
 	
 	public static boolean debug = true;
 	public static String gameVersion = "0.3.1";
+	public static Game game;
 
 	public Game() {
-		// TODO Auto-generated constructor stub
+		Game.game = this;
 	}
 	
 	public void actionResponse(String response) {
