@@ -38,7 +38,6 @@ public class Player extends GameThing {
 	@Override
 	public String getSaveline() {
 				// Player::<name>::<code>::<description>::
-				// <xdim>::<ydim>
 		return "Player::"+this.name+"::"+this.code+"::"+this.description+"::"+"\r";
 	}
 	

@@ -16,7 +16,10 @@ public class RoomChart {
 	public static JPanel chartPanel = new JPanel();
 	public static JLabel roomNameLabel = new JLabel();
 	
-	public static void setRoomChart(JPanel panel, Room room) {
+	/**
+	 * Foe editor
+	 */
+	public static void setRoomChart(JPanel panel, Room room, GameUI gameUI) {
 		if (room == null) {
 			panel.remove(roomNameLabel);
 			panel.remove(chartPanel);
@@ -51,7 +54,12 @@ public class RoomChart {
 		int buttonCount = 0;
 		for (int i=0;i<objArr.length;i++) {
 			if (objArr[i] != null) {
-				objButton = new GameObjectButton(xpos, ypos, objArr[i]);
+				if (gameUI != null) {
+					objButton = new GameObjectButton(xpos, ypos, objArr[i], gameUI);
+				}
+				else {
+					objButton = new GameObjectButton(xpos, ypos, objArr[i]);
+				}
 				chartPanel.add(objButton);
 				buttonCount++;
 			}
@@ -64,7 +72,9 @@ public class RoomChart {
 		panel.add(chartPanel);
 	}
 
-
+	/**
+	 * For position choosing
+	 */
 	public static void setRoomPositionChart(JPanel panel, Room room) {
 		if (room == null) {
 			return;

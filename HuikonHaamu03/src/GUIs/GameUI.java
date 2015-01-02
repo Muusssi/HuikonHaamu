@@ -1,16 +1,88 @@
 package GUIs;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import gameCore.Game;
 import gameCore.GameWorld;
+import gameExceptions.IllegalGameCodeException;
+import gameObj.Player;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class GameUI extends JFrame  {
 	
+	GameWorld gw;
+	
+	JPanel gamePanel;
+	JPanel chartPane;
+	
+	JTextArea textArea;
 	
 	
+	private void setChartPanel() {
+		chartPane = new JPanel();
+		chartPane.setBounds(530, 30, 230, 250);
+		chartPane.setLayout(null);
+		chartPane.setVisible(true);
+		gamePanel.add(chartPane);
+	}
+	
+	public void updateGame() {
+		//this.updateRoomList();
+		//this.updateObjectList(editedRoom);
+		//this.updateVoidList();
+		RoomChart.setRoomChart(chartPane, gw.player.location, this);
+	}
+	
+	public void doorClick() {
+		
+	}
 	
 	public GameUI(GameWorld gameWorld) {
-		// TODO Auto-generated constructor stub
+		gw = gameWorld;
+		setTitle("Huikon Haamu - "+gameWorld.name);
+		setSize(1000,600);
+		setLocationRelativeTo(null);
+
+		gamePanel = new JPanel();
+	    getContentPane().add(gamePanel);
+	    gamePanel.setLayout(null);
+	    
+	    // Setting up exit listener
+	 	addWindowListener(new WindowAdapter() {
+	 		public void windowClosing(WindowEvent e) {
+	 			System.exit(0);
+	 		}
+	 	});
+	 	
+	 	textArea = new JTextArea(5,20);
+	 	JScrollPane scrollPane = new JScrollPane(textArea); 
+	 	textArea.append("Hei!");
+	 	scrollPane.setBounds(50, 300, 700, 200);
+	 	textArea.setEditable(false);
+	 	gamePanel.add(scrollPane);
+	 	Game.textArea = textArea;
+	 	
+	 	setChartPanel();
+	 	updateGame();
+ 		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		GameWorld gameWorld = GameWorld.loadWorld("guitest.hhw");
+		try {
+			new Player(gameWorld, "Tomppa", "Pelaaja ite");
+		} catch (IllegalGameCodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Game game = new Game();
+		game.startGame(gameWorld);
+		new GameUI(gameWorld);
 	}
 
 }

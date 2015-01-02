@@ -85,7 +85,7 @@ public class WorldEditor extends JFrame {
 		this.updateRoomList();
 		this.updateObjectList(editedRoom);
 		this.updateVoidList();
-		RoomChart.setRoomChart(chartPane, editedRoom);
+		RoomChart.setRoomChart(chartPane, editedRoom, null);
 	}
 	
 	class AddRoom implements ActionListener {
