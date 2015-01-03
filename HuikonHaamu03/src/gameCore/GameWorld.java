@@ -119,8 +119,9 @@ public class GameWorld {
 	    }	
 	}
 	
-	/**This function recreates a GameWorld from a HHsave file.*/
-	public static GameWorld loadWorld(String fileName) {
+	/**This function recreates a GameWorld from a HHsave file.
+	 * @throws CorruptedSaveLineException */
+	public static GameWorld loadWorld(String fileName) throws CorruptedSaveLineException {
 		BufferedReader reader = null;
 		GameWorld newWorld;
 	    try {
@@ -133,7 +134,7 @@ public class GameWorld {
 		    	saveVersion = line.split(":")[1];
 		    }
 		    else {
-		    	throw new CorruptedSaveLineException(line);
+		    	throw new CorruptedSaveLineException(line, true);
 		    }
 		    String lang = reader.readLine();// lang
 		    line = reader.readLine();//WorldName:-------
@@ -160,10 +161,12 @@ public class GameWorld {
 					Player.loadLine(line, newWorld);
 				}
 				else {
-					throw new CorruptedSaveLineException(line);
+					throw new CorruptedSaveLineException(line, false);
 				}
 		    	line = reader.readLine();
 		    }
+	    } catch (CorruptedSaveLineException e) {
+	    	throw e;
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	      throw new RuntimeException(e);

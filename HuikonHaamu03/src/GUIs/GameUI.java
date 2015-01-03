@@ -37,11 +37,7 @@ public class GameUI extends JFrame  {
 		//this.updateVoidList();
 		RoomChart.setRoomChart(chartPane, gw.player.location, this);
 	}
-	
-	public void doorClick() {
-		
-	}
-	
+
 	public GameUI(GameWorld gameWorld) {
 		gw = gameWorld;
 		setTitle("Huikon Haamu - "+gameWorld.name);
@@ -52,37 +48,42 @@ public class GameUI extends JFrame  {
 	    getContentPane().add(gamePanel);
 	    gamePanel.setLayout(null);
 	    
-	    // Setting up exit listener
-	 	addWindowListener(new WindowAdapter() {
-	 		public void windowClosing(WindowEvent e) {
-	 			System.exit(0);
-	 		}
-	 	});
+	   
 	 	
 	 	textArea = new JTextArea(5,20);
-	 	JScrollPane scrollPane = new JScrollPane(textArea); 
-	 	textArea.append("Hei!");
+	 	JScrollPane scrollPane = new JScrollPane(textArea);
 	 	scrollPane.setBounds(50, 300, 700, 200);
 	 	textArea.setEditable(false);
 	 	gamePanel.add(scrollPane);
 	 	Game.textArea = textArea;
+	 	
+	 	// Setting up exit listener
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				MainMenu.menu.setVisible(true);
+			}
+		});
 	 	
 	 	setChartPanel();
 	 	updateGame();
  		setVisible(true);
 	}
 	
+	
+	/*
 	public static void main(String[] args) {
-		GameWorld gameWorld = GameWorld.loadWorld("guitest.hhw");
 		try {
+			GameWorld gameWorld = GameWorld.loadWorld("guitest.hhw");
 			new Player(gameWorld, "Tomppa", "Pelaaja ite");
+			Game game = new Game();
+			game.startGame(gameWorld);
+			new GameUI(gameWorld);
 		} catch (IllegalGameCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Game game = new Game();
-		game.startGame(gameWorld);
-		new GameUI(gameWorld);
+		
 	}
+	*/
 
 }

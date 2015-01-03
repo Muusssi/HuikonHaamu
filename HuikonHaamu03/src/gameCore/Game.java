@@ -7,7 +7,7 @@ import gameObj.HC;
 public class Game {
 	
 	public static boolean debug = true;
-	public static String gameVersion = "0.3.1";
+	public static String gameVersion = "0.7";
 	public static Game game;
 	public static boolean guiUsed = true;
 	public static JTextArea textArea = null;

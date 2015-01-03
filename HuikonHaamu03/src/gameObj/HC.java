@@ -78,6 +78,8 @@ public class HC {
 		public static String LOOK;
 		public static String HIT;
 		
+		public static String EXPLORE_NAMING;
+		
 		public static String SYNTAX_ERROR;
 		public static String UNKNOWN_CODE;
 		public static String UNKNOWN_ACTION;
@@ -195,7 +197,8 @@ public class HC {
 			
 			
 			
-			//CommandLineUI
+			//Actions
+			
 			GO = "go";
 			OPEN = "open";
 			CLOSE = "close";
@@ -203,6 +206,9 @@ public class HC {
 			LOOK = "look";
 			HIT = "hit";
 			
+			EXPLORE_NAMING = "It's ";
+			
+			//CommandLineUI
 			SYNTAX_ERROR = "Syntax Error.\r <action> <object code> like 'go d1'";
 			UNKNOWN_CODE = "Unknown code";
 			UNKNOWN_ACTION = "Unknown action. Use "+GO+", "+OPEN+", "+CLOSE+", "+TAKE+", "+LOOK+" or "+HIT;

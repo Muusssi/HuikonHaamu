@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import gameCore.*;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
 import gameExceptions.WorldMakingConflict;
 import gameObj.*;
@@ -924,78 +925,45 @@ public class WorldEditor extends JFrame {
 			while (gameWorld.name.equals("")) {
 				setWorldName();
 			}
-			JPanel savePanel = new JPanel();
-			savePanel.setLayout(new GridLayout(2,1));
-			JLabel saveNameLabel = new JLabel(HC.EDITOR_SAVENAME_LABEL);
-			saveNameLabel.setToolTipText(HC.EDITOR_SAVENAME_TOOLTIP);
-			JTextField saveNameField = new JTextField(gameWorld.name);
-			savePanel.add(saveNameLabel);
-			savePanel.add(saveNameField);
-			
-			boolean saveOK = false;
-			do {
-				int result = JOptionPane.showConfirmDialog(null, savePanel,
-						HC.EDITOR_SAVENAME_TITLE, JOptionPane.OK_CANCEL_OPTION);
-				saveName = saveNameField.getText();
-						
-				if (result == JOptionPane.OK_OPTION) {
-					if (saveName.equals("")) {
-						JOptionPane.showMessageDialog(null, HC.EDITOR_SAVENAME_MISSING);
-					}
-					else {
-						gameWorld.saveWorld(saveName);
-						JOptionPane.showMessageDialog(null, saveName+".hhw");
-						saveOK = true;
-					}
-					
-				}
-				else {
-					saveOK = true;
-				}
-			
-			} while (!saveOK);
+			JFileChooser fileChooser = new JFileChooser();
+			int rVal = fileChooser.showSaveDialog(WorldEditor.this);
+			if (rVal == JFileChooser.APPROVE_OPTION) {
+				saveName = fileChooser.getSelectedFile().getAbsolutePath();
+				gameWorld.saveWorld(saveName);
+			}
+
 		}
 	}
 	
 	class Load implements ActionListener {
 		String saveName;
+		String path;
 		public void actionPerformed(ActionEvent e) {
-			JPanel savePanel = new JPanel();
-			savePanel.setLayout(new GridLayout(2,1));
-			JLabel saveNameLabel = new JLabel(HC.EDITOR_SAVENAME_LABEL);
-			saveNameLabel.setToolTipText(HC.EDITOR_SAVENAME_TOOLTIP);
-			JTextField saveNameField = new JTextField(gameWorld.name);
-			savePanel.add(saveNameLabel);
-			savePanel.add(saveNameField);
-			
-			boolean loadOK = false;
-			do {
-				int result = JOptionPane.showConfirmDialog(null, savePanel,
-						"", JOptionPane.OK_CANCEL_OPTION);
-				saveName = saveNameField.getText();
-						
-				if (result == JOptionPane.OK_OPTION) {
-					if (saveName.equals("")) {
-						JOptionPane.showMessageDialog(null, HC.EDITOR_SAVENAME_MISSING);
+			JFileChooser fileChooser = new JFileChooser();
+			int rVal = fileChooser.showOpenDialog(WorldEditor.this);
+			if (rVal == JFileChooser.APPROVE_OPTION) {
+				saveName = fileChooser.getSelectedFile().getName();
+				path = fileChooser.getSelectedFile().getAbsolutePath();
+				
+
+				try {
+					gameWorld = GameWorld.loadWorld(path);
+					wegui.setTitle("World Editor - "+ gameWorld.name);		
+					updateEditor();
+					
+				} catch (CorruptedSaveLineException e1) {
+					if (e1.notHHfile) {
+						JOptionPane.showMessageDialog(null, "Error: '"+saveName+"' is not a HuikonHaamu file.");
+					}
+					else if (e1.corruptedLine != null) {
+						JOptionPane.showMessageDialog(null, "Error: '"+saveName+"' is somehow corrupted and can not be opened." +
+															"Error occured on line: "+e1.corruptedLine);
 					}
 					else {
-						File f = new File(saveName+".hhw");
-						if(f.exists() && !f.isDirectory()) {
-							gameWorld = GameWorld.loadWorld(saveName+".hhw");
-							wegui.setTitle("World Editor - "+ gameWorld.name);		
-							updateEditor();
-							loadOK = true;
-						}
-						else {
-							JOptionPane.showMessageDialog(null, HC.EDITOR_LOAD_FILE_MISSING);
-						}
+						JOptionPane.showMessageDialog(null, "Un unexpected error while loading file '"+saveName+"'.");
 					}
 				}
-				else {
-					loadOK = true;
-				}
-			
-			} while (!loadOK);
+			}
 		}
 	}
 	
@@ -1122,7 +1090,7 @@ public class WorldEditor extends JFrame {
 	    // Setting up exit listener
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				MainMenu.menu.setVisible(true);
 			}
 		});
 

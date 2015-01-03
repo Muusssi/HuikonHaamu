@@ -74,7 +74,7 @@ public abstract class GameThing {
 	
 	/* The player actions: */
 	public void explore() {
-		gw.game.actionResponse(this.description);
+		gw.game.actionResponse(HC.EXPLORE_NAMING+this.name+". "+this.description);
 	}
 	
 	public void take() {
