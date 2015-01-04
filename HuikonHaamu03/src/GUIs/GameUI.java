@@ -13,7 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class GameUI extends JFrame  {
+import quests.Quest;
+
+public class GameUI extends JFrame {
 	
 	GameWorld gw;
 	
@@ -35,11 +37,14 @@ public class GameUI extends JFrame  {
 		//this.updateRoomList();
 		//this.updateObjectList(editedRoom);
 		//this.updateVoidList();
+		gw.checkActiveMissions();
 		RoomChart.setRoomChart(chartPane, gw.player.location, this);
 	}
 
 	public GameUI(GameWorld gameWorld) {
 		gw = gameWorld;
+		
+		
 		setTitle("Huikon Haamu - "+gameWorld.name);
 		setSize(1000,600);
 		setLocationRelativeTo(null);
@@ -63,6 +68,10 @@ public class GameUI extends JFrame  {
 				MainMenu.menu.setVisible(true);
 			}
 		});
+		
+		Quest q = new Quest(gameWorld, "Test Quest", "This is the prolog of awsome test quest.",
+				"This is the epilog of awsome test quest."); 
+		q.startQuest();
 	 	
 	 	setChartPanel();
 	 	updateGame();

@@ -17,6 +17,8 @@ public class HC {
 		public static String GAMETHING_CLOSE;
 		public static String GAMETHING_GO;
 		public static String GAMETHING_HIT;
+		public static String GAMETHING_EAT = "You do not want to eat that!";
+		public static String GAMETHING_OERATE = "You don't know how to \"operate\" this thing.";
 	
 	//Room
 		public static String ROOM_VOID_NAME;
@@ -77,6 +79,7 @@ public class HC {
 		public static String TAKE;
 		public static String LOOK;
 		public static String HIT;
+		public static String OPERATE = "Operate";
 		
 		public static String EXPLORE_NAMING;
 		
@@ -198,7 +201,6 @@ public class HC {
 			
 			
 			//Actions
-			
 			GO = "go";
 			OPEN = "open";
 			CLOSE = "close";
@@ -242,26 +244,15 @@ public class HC {
 		
 
 		if (lang.equals("fi")) { // TODO SUOMEKSI VAAN
-			//GameThing responses:
-			GAMETHING_TAKE = "You can't take that thing and carry it around.";
-			GAMETHING_PUT = "You can't put that there.";
-			GAMETHING_OPEN = "You can't open that.";
-			GAMETHING_CLOSE = "You can't close that.";
-			GAMETHING_GO = "You can't go in there.";
-			GAMETHING_HIT = "Don't be so aggressive. You had no reason for hitting that thing.";
 			
-			// Room
-			ROOM_DESCRIPTION = "This just an ordinary room.";
-			
-			// Door
-			DOOR_DESCRIPTION = "This just an ordinary door.";
-			DOOR_OPEN_CLOSED = "You open the door.";
-			DOOR_OPEN_OPENED = "This door is already open.";
-			DOOR_CLOSE_CLOSED = "This door is already closed.";
-			DOOR_CLOSE_OPENED = "You close the door.";
-			DOOR_GO_CLOSED = "This door is closed.";
-			DOOR_GO_OPENED = "You go through the door.";
 		}
+	}
+	
+	public static String[] getLanguageOptions() {
+		String[] langOptions = new String[2];
+		langOptions[0] = "eng";
+		langOptions[1] = "fi";
+		return langOptions;
 	}
 	
 	

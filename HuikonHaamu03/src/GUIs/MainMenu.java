@@ -39,16 +39,19 @@ public class MainMenu extends JFrame {
 		menuPanel = new JPanel();
 		
 		JButton playButton = new JButton("Play");
-		playButton.setBounds(50, 1, 80, 30);
 		menuPanel.add(playButton);
 		playButton.addActionListener(new Play());
 		playButton.setToolTipText("Start playing a game.");
 		
 		JButton editorButton = new JButton("Editor");
-		editorButton.setBounds(50, 1, 80, 30);
 		menuPanel.add(editorButton);
 		editorButton.addActionListener(new Editor());
-		editorButton.setToolTipText("Start playing a game.");
+		editorButton.setToolTipText("Open the editor.");
+		
+		JButton settingsButton = new JButton("Settings");
+		//menuPanel.add(settingsButton);
+		settingsButton.addActionListener(new Editor()); //TODO
+		settingsButton.setToolTipText("Change settings like language...");
 		
 		// Setting up exit listener
 		addWindowListener(new WindowAdapter() {

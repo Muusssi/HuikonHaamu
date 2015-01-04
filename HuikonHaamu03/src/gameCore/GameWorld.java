@@ -181,6 +181,13 @@ public class GameWorld {
 	    }	
 		return newWorld;
 	}
+	
+	public void checkActiveMissions() {
+		Iterator<Mission> itr = activeMissions.iterator();
+		while (itr.hasNext()) {
+			itr.next().checkMission();
+		}
+	}
 
 
 	public String[] getThingArray() {

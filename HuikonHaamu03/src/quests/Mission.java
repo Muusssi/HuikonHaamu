@@ -13,7 +13,7 @@ public class Mission {
 	public String prolog;
 	public String epilog;
 	
-	public LinkedList<Condition> conditions;
+	public LinkedList<Condition> conditions = new LinkedList<Condition>();
 	public Quest quest;
 	public boolean done = false;
 
@@ -26,6 +26,11 @@ public class Mission {
 		this.quest = quest;
 	}
 	
+	public void begin() {
+		gw.game.questInfo(prolog);
+		gw.activeMissions.add(this);
+	}
+	
 	public void checkMission() {
 		Iterator<Condition> itr = conditions.iterator();
 		while (itr.hasNext()) {
@@ -33,7 +38,9 @@ public class Mission {
 				return;
 			}
 		}
+		gw.game.questInfo(epilog);
 		done = true;
+		gw.activeMissions.remove(this);
 		quest.advance();
 	}
 

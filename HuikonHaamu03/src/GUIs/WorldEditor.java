@@ -931,7 +931,6 @@ public class WorldEditor extends JFrame {
 				saveName = fileChooser.getSelectedFile().getAbsolutePath();
 				gameWorld.saveWorld(saveName);
 			}
-
 		}
 	}
 	

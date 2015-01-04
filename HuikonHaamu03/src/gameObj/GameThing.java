@@ -12,6 +12,10 @@ public abstract class GameThing {
 	
 	public String codePrefix;
 	
+	public enum Actions{
+		Explore, Take, Open, Close, Go, Hit, Eat, Operate,
+	}
+	
 	public GameThing(GameWorld gw, String name, String description, String code) 
 			throws IllegalGameCodeException {
 		this.gw = gw;
@@ -99,6 +103,14 @@ public abstract class GameThing {
 	
 	public void hit() {
 		gw.game.actionResponse(HC.GAMETHING_HIT);
+	}
+	
+	public void operate() {
+		gw.game.actionResponse(HC.GAMETHING_OERATE);
+	}
+	
+	public void eat() {
+		gw.game.actionResponse(HC.GAMETHING_EAT);
 	}
 	
 	/**Three Digit Code*/

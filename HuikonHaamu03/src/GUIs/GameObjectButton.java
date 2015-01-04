@@ -50,11 +50,13 @@ public class GameObjectButton extends JButton {
 			System.out.println(clickedButton.gameObject.name);
 			if (gameObject.getClass() == Door.class) {
 				clickedButton.gameObject.go();
+				Game.lastAction = GameThing.Actions.Go;
 			}
 			else {
 				clickedButton.gameObject.explore();
+				Game.lastAction = GameThing.Actions.Explore;
 			}
-				
+			Game.lastTarget = gameObject;
 			gameUI.updateGame();
 		}
 	}
@@ -65,12 +67,7 @@ public class GameObjectButton extends JButton {
 	public GameObjectButton(int xpos, int ypos, GameObject gameObject) {
 		this.setBounds(xpos*30, ypos*30, 20, 20);
 		this.gameObject = gameObject;
-		if (Game.debug) {
-			this.setToolTipText(gameObject.position+": "+gameObject.code+": "+gameObject.name);
-		}
-		else {
-			this.setToolTipText(gameObject.name);
-		}
+		this.setToolTipText(gameObject.position+": "+gameObject.code+": "+gameObject.name);
 		this.chosenPosition = gameObject.position;
 		this.addActionListener(new PositionListener());
 		
@@ -80,7 +77,11 @@ public class GameObjectButton extends JButton {
 	 * Button for game
 	 */
 	public GameObjectButton(int xpos, int ypos, GameObject gameObject, GameUI gameui) {
-		this.setBounds(xpos*30, ypos*30, 20, 20);
+		if (gameObject.getClass() == Door.class) {
+			this.setBounds(xpos*30+2, ypos*30, 15, 20);
+		} else {
+			this.setBounds(xpos*30, ypos*30, 20, 20);
+		}
 		this.gameObject = gameObject;
 		this.gameUI = gameui;
 		if (Game.debug) {
@@ -112,11 +113,12 @@ public class GameObjectButton extends JButton {
 	    JMenuItem popupHit = new JMenuItem(HC.HIT);
 	    popupHit.addActionListener(new HitObject());
 	    gameThingPopup.add(popupHit);
+	    JMenuItem popupOperate = new JMenuItem(HC.OPERATE);
+	    popupOperate.addActionListener(new OperateObject());
+	    gameThingPopup.add(popupOperate);
 	    
 	    this.add(gameThingPopup);
 		
-		// Adding a mouselistener for Room objects window, to examine right clicks
-		// and on which objects they were made
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent mouseEvent) {
 				GameObjectButton button = (GameObjectButton) mouseEvent.getSource();
@@ -141,42 +143,55 @@ public class GameObjectButton extends JButton {
 	}
 	
 	
+	//Actions
 	class GoObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.go();
+			Game.lastAction = GameThing.Actions.Go;
 			gameUI.updateGame();
 		}
 	}
 	class OpenObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.open();
+			Game.lastAction = GameThing.Actions.Open;
 			gameUI.updateGame();
 		}
 	}
 	class CloseObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.close();
+			Game.lastAction = GameThing.Actions.Close;
 			gameUI.updateGame();
 		}
 	}
 	class TakeObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.take();
+			Game.lastAction = GameThing.Actions.Take;
 			gameUI.updateGame();
 		}
 	}
 	class ExploreObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.explore();
+			Game.lastAction = GameThing.Actions.Explore;
 			gameUI.updateGame();
 		}
 	}
 	class HitObject implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			actionObject.hit();
+			Game.lastAction = GameThing.Actions.Hit;
 			gameUI.updateGame();
 		}
 	}
-
+	class OperateObject implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			actionObject.operate();
+			Game.lastAction = GameThing.Actions.Operate;
+			gameUI.updateGame();
+		}
+	}
 
 }
