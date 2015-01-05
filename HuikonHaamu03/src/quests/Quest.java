@@ -1,6 +1,7 @@
 package quests;
 
 import gameCore.GameWorld;
+import gameExceptions.IllegalGameCodeException;
 
 import java.util.LinkedList;
 
@@ -10,6 +11,7 @@ public class Quest {
 	public String name;
 	public String prolog;
 	public String epilog;
+	public String code;
 	
 	public LinkedList<Mission> missions = new LinkedList<Mission>();
 	public int currentMission = 0;
@@ -17,11 +19,28 @@ public class Quest {
 	public boolean finished = false;
 	
 
-	public Quest(GameWorld gw, String name, String prolog, String epilog) {
+	public Quest(GameWorld gw, String name, String prolog, String epilog, String code)
+			throws IllegalGameCodeException {
 		this.gw = gw;
 		this.name = name;
 		this.prolog = prolog;
 		this.epilog = epilog;
+		// Set the quest code
+		if (code == null || code.equals("")) {
+			this.code = getNewQuestCode();
+		} else if (gw.quests.containsKey(code)) {
+			throw new IllegalGameCodeException(code);
+		} else {
+			this.code = code;
+		}
+	}
+	
+	public String getNewQuestCode() {
+		int qCounter = 1;
+		while (gw.quests.containsKey("Q"+Integer.toString(qCounter))) {
+			qCounter++;
+		}
+		return "Q"+Integer.toString(qCounter);
 	}
 	
 	public void addMission(Mission mission) {

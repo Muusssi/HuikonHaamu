@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import quests.Mission;
 import quests.Quest;
 
 public class GameUI extends JFrame {
@@ -69,10 +70,7 @@ public class GameUI extends JFrame {
 			}
 		});
 		
-		Quest q = new Quest(gameWorld, "Test Quest", "This is the prolog of awsome test quest.",
-				"This is the epilog of awsome test quest."); 
-		q.startQuest();
-	 	
+		
 	 	setChartPanel();
 	 	updateGame();
  		setVisible(true);

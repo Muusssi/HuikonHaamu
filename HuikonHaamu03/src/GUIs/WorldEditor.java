@@ -1098,6 +1098,7 @@ public class WorldEditor extends JFrame {
 	    updateEditor();
 		setVisible(true);
 	}
+	
 
 	public static void main(String[] args) {
 		new WorldEditor("eng");

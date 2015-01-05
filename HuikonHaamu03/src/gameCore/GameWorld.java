@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,8 +37,13 @@ public class GameWorld {
 	public HashMap<String,Door> unlinkedDoorMap = new HashMap<String,Door>();
 	public HashMap<String,Passage> passageMap = new HashMap<String,Passage>();
 	
+	public HashMap<String, Quest> quests = new HashMap<String, Quest>();
+	public HashMap<String, Mission> missions = new HashMap<String, Mission>();
+	
 	public LinkedList<Quest> activeQuests = new LinkedList<Quest>();
 	public LinkedList<Mission> activeMissions = new LinkedList<Mission>();
+	public LinkedList<Mission> removableMissions = new LinkedList<Mission>();
+	public LinkedList<Mission> newMissions = new LinkedList<Mission>();
 	
 	
 	public GameWorld(String name, String language) {
@@ -187,6 +193,24 @@ public class GameWorld {
 		while (itr.hasNext()) {
 			itr.next().checkMission();
 		}
+		itr = removableMissions.iterator();
+		while (itr.hasNext()) {
+			activeMissions.
+			remove(itr.next().code);
+		}
+		itr = newMissions.iterator();
+		while (itr.hasNext()) {
+			Mission m = itr.next();
+			activeMissions.put(m.code, m);
+		}
+	}
+
+	public void addFinishedMission(Mission m) {
+		this.removableMissions.add(m);
+	}
+	
+	public void addNewMission(Mission m) {
+		this.newMissions.add(m);
 	}
 
 

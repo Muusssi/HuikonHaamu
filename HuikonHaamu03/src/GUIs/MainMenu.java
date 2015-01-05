@@ -22,6 +22,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import quests.Mission;
+import quests.Quest;
+
 import GUIs.WorldEditor.Load;
 
 @SuppressWarnings("serial")
@@ -83,6 +86,7 @@ public class MainMenu extends JFrame {
 					new Player(gameWorld, "Tomppa", "Pelaaja ite"); // TODO player fixed?
 					Game game = new Game();
 					game.startGame(gameWorld);
+				 	
 					new GameUI(gameWorld);
 					
 				} catch (CorruptedSaveLineException e1) {
