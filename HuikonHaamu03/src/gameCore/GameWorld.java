@@ -195,13 +195,12 @@ public class GameWorld {
 		}
 		itr = removableMissions.iterator();
 		while (itr.hasNext()) {
-			activeMissions.
-			remove(itr.next().code);
+			activeMissions.remove(itr.next());
 		}
 		itr = newMissions.iterator();
 		while (itr.hasNext()) {
 			Mission m = itr.next();
-			activeMissions.put(m.code, m);
+			activeMissions.add(m);
 		}
 	}
 

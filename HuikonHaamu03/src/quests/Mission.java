@@ -20,30 +20,33 @@ public class Mission {
 	public boolean done = false;
 
 
-	public Mission(GameWorld gw, String name, String prolog, String epilog, Quest quest)
+	public Mission(GameWorld gw, String name, String prolog, String epilog, Quest quest, String code)
 			throws IllegalGameCodeException {
 		this.gw = gw;
 		this.name = name;
 		this.prolog = prolog;
 		this.epilog = epilog;
 		this.quest = quest;
-		// Set the quest code
+		quest.addMission(this);
+		// Set the Mission code
 		if (code == null || code.equals("")) {
 			this.code = getNewMissionCode();
-		} else if (gw.quests.containsKey(code)) {
+		} else if (gw.missions.containsKey(code)) {
 			throw new IllegalGameCodeException(code);
 		} else {
 			this.code = code;
 		}
 	}
 	
-	public String getNewMissionCode() { //TODO Fix mission numbering
-		int qCounter = 1;
-		while (gw.quests.containsKey("M"+Integer.toString(qCounter))) {
-			qCounter++;
+	public String getNewMissionCode() {
+		int mCounter = 1;
+		while (gw.missions.containsKey(quest.code+"M"+Integer.toString(mCounter))) {
+			mCounter++;
 		}
-		return "M"+Integer.toString(qCounter);
+		return quest.code+"M"+Integer.toString(mCounter);
 	}
+	
+	
 	
 	public void begin() {
 		gw.game.questInfo(prolog);

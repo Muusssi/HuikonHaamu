@@ -34,6 +34,7 @@ public class Quest {
 			this.code = code;
 		}
 	}
+
 	
 	public String getNewQuestCode() {
 		int qCounter = 1;
