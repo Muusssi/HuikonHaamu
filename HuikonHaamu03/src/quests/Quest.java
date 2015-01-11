@@ -1,11 +1,13 @@
 package quests;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
+import gameObj.GameObject;
 
 import java.util.LinkedList;
 
-public class Quest {
+public class Quest extends UnInteractableThing{
 	
 	public GameWorld gw;
 	public String name;
@@ -27,7 +29,7 @@ public class Quest {
 		this.epilog = epilog;
 		// Set the quest code
 		if (code == null || code.equals("")) {
-			this.code = getNewQuestCode();
+			this.code = getNewCode();
 		} else if (gw.quests.containsKey(code)) {
 			throw new IllegalGameCodeException(code);
 		} else {
@@ -36,7 +38,7 @@ public class Quest {
 	}
 
 	
-	public String getNewQuestCode() {
+	public String getNewCode() {
 		int qCounter = 1;
 		while (gw.quests.containsKey("Q"+Integer.toString(qCounter))) {
 			qCounter++;
@@ -74,6 +76,40 @@ public class Quest {
 		finished = true;
 	}
 	
+	public String getEditorInfo() {
+		return this.code+": "+this.name+" -Quest";
+	}
+
+
+	@Override
+	public void remove() {
+		gw.quests.remove(this);
+		
+	}
+
+
+	@Override
+	public String getSaveline() {
+		/* Quest::<name>::<code>::<prolog>::<epilog> */
+		return "Quest::"+this.name+"::"+this.code+"::"+this.prolog+"::"+this.epilog+"::\r";
+	}
 	
+	/** Function for recreating a Quest from the line of text used to save it.*/
+	public static Quest loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Quest::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Quest newQuest;
+			try {
+				newQuest = new Quest(gw, saveLineComp[1], saveLineComp[3], saveLineComp[4], saveLineComp[2]);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+			}
+			return newQuest;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
+	}
 
 }

@@ -13,8 +13,10 @@ import java.util.LinkedList;
 
 import javax.swing.ListModel;
 
+import quests.Condition;
 import quests.Quest;
 import quests.Mission;
+import quests.UnInteractableThing;
 
 import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
@@ -39,6 +41,7 @@ public class GameWorld {
 	
 	public HashMap<String, Quest> quests = new HashMap<String, Quest>();
 	public HashMap<String, Mission> missions = new HashMap<String, Mission>();
+	public HashMap<String, Condition> conditions = new HashMap<String, Condition>();
 	
 	public LinkedList<Quest> activeQuests = new LinkedList<Quest>();
 	public LinkedList<Mission> activeMissions = new LinkedList<Mission>();
@@ -61,6 +64,10 @@ public class GameWorld {
 	}
 	
 	public void remove(GameThing thing) {
+		thing.remove();
+	}
+	
+	public void remove(UnInteractableThing thing) {
 		thing.remove();
 	}
 	
@@ -197,11 +204,14 @@ public class GameWorld {
 		while (itr.hasNext()) {
 			activeMissions.remove(itr.next());
 		}
+		removableMissions = new LinkedList<Mission>();
 		itr = newMissions.iterator();
 		while (itr.hasNext()) {
 			Mission m = itr.next();
 			activeMissions.add(m);
 		}
+		newMissions = new LinkedList<Mission>();
+		
 	}
 
 	public void addFinishedMission(Mission m) {
@@ -258,6 +268,19 @@ public class GameWorld {
 		String[] objectArray = new String[this.thingsInVoid.size()];
 		int i = 0;
 		GameThing current;
+		while (itr.hasNext()) {
+			current = itr.next();
+			objectArray[i] = current.getEditorInfo();
+			i++;
+		}
+		return objectArray;
+	}
+	
+	public String[] getQuestArrayForEditor() {
+		Iterator<Quest> itr = this.quests.values().iterator();
+		String[] objectArray = new String[this.quests.size()];
+		int i = 0;
+		Quest current;
 		while (itr.hasNext()) {
 			current = itr.next();
 			objectArray[i] = current.getEditorInfo();

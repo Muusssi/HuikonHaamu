@@ -87,8 +87,8 @@ public class Passage extends GameThing {
 
 	@Override
 	public String getEditorInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		// Passages are hidden from the editor -> not needed.
+		return "Editor info not implemented.";
 	}
 
 	@Override

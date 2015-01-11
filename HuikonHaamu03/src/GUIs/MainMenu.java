@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import quests.Condition;
 import quests.Mission;
 import quests.Quest;
 
@@ -86,10 +87,14 @@ public class MainMenu extends JFrame {
 					new Player(gameWorld, "Tomppa", "Pelaaja ite"); // TODO player fixed?
 					Game game = new Game();
 					game.startGame(gameWorld);
-				 	
+					Quest q = new Quest(gameWorld, "Questi", "Hieno prologi", "vileä hienompi epilogi", null);
+					Mission m = new Mission(gameWorld, "Missio1", "Mprologi", "Mepilogi", null, q);
+					m.conditions.add(new Condition(gameWorld, null, Condition.ConditionType.Hit, gameWorld.objectMap.get("o1")));
+				 	gameWorld.quests.put(q.code, q);
 					new GameUI(gameWorld);
 					
 				} catch (CorruptedSaveLineException e1) {
+					setVisible(true);
 					if (e1.notHHfile) {
 						JOptionPane.showMessageDialog(null, "Error: '"+saveName+"' is not a HuikonHaamu file.");
 					}

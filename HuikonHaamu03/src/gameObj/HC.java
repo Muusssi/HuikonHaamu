@@ -108,6 +108,7 @@ public class HC {
 		public static String EDITOR_DOOR_LINK_DOOR_TITLE = "Unlinked doors:";
 		
 		public static String EDITOR_VOID_LIST_LABEL = "Void:";
+		public static String EDITOR_QUEST_AND_TRIGGERS_LIST_LABEL = "Quests:";
 
 		public static String EDITOR_NAME_LABEL;
 		

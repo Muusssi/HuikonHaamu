@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicBorders;
 
+import quests.UnInteractableThing;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,6 +62,14 @@ public class WorldEditor extends JFrame {
     JMenuItem voidPopupMove;
     JMenuItem voidPopupUnLinkDoor;
     
+    //Questlist
+  	JLabel questListLabel;
+  	JScrollPane questListPane;
+  	JList questList;
+  	JPopupMenu questPopup;
+    JMenuItem questPopupDelete;
+    JMenuItem questPopupEdit;
+    
 	//Chart
     JPanel chartPane = null;
     
@@ -67,6 +77,7 @@ public class WorldEditor extends JFrame {
     Room editedRoom = null;
     static int chosenPosition;
     static GameObject chosenGameObject;
+    static UnInteractableThing chosenUnInteractableThing;
 
 
 	GameWorld gameWorld;
@@ -797,6 +808,14 @@ public class WorldEditor extends JFrame {
 		}	
 	}
 	
+	class RemoveQuest implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			gameWorld.remove(WorldEditor.chosenUnInteractableThing);
+			updateEditor();
+		}	
+	}
+	
 	class MoveToVoid implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -890,6 +909,28 @@ public class WorldEditor extends JFrame {
 		};
 	    voidList.addMouseListener(mouseListener);
     }
+	
+	public void updateQuestList() {
+		questList = new JList(gameWorld.getQuestArrayForEditor());
+		questListPane.getViewport().add(questList);
+		editorPanel.add(questListPane);
+
+		// Adding a mouselistener
+		MouseListener mouseListener = new MouseAdapter() {
+			public void mouseClicked(MouseEvent mouseEvent) {
+				JList theList = (JList) mouseEvent.getSource();
+				if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+					int index = theList.locationToIndex(mouseEvent.getPoint());
+					if (index >= 0) { // TODO mouse listener
+						String line = (String)theList.getModel().getElementAt(index);
+						chosenUnInteractableThing = (UnInteractableThing)gameWorld.quests.get(line.split(":")[0]);
+						questPopup.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+					}
+				}
+			}
+		};
+	    voidList.addMouseListener(mouseListener);
+    }
 
 	public void setWorldName() {
 		JPanel worldNamePanel = new JPanel();
@@ -926,6 +967,8 @@ public class WorldEditor extends JFrame {
 				setWorldName();
 			}
 			JFileChooser fileChooser = new JFileChooser();
+			File testFile = new File(gameWorld.name+".hhw");
+			fileChooser.setSelectedFile(testFile);
 			int rVal = fileChooser.showSaveDialog(WorldEditor.this);
 			if (rVal == JFileChooser.APPROVE_OPTION) {
 				saveName = fileChooser.getSelectedFile().getAbsolutePath();
@@ -1053,6 +1096,22 @@ public class WorldEditor extends JFrame {
 	    voidPopup.add(voidPopupUnLinkDoor);
 	    voidList = new JList();
 	    voidList.add(voidPopup);
+	    
+	    // Setting quest and trigger directory
+	    questListLabel = new JLabel(HC.EDITOR_QUEST_AND_TRIGGERS_LIST_LABEL);
+	    questListLabel.setBounds(300,270,100,20);
+	    questListPane = new JScrollPane();
+	    questListPane.setBounds(300, 300, 200, 200);
+	    editorPanel.add(questListLabel);
+	    editorPanel.add(questListPane);
+
+	    questPopup = new JPopupMenu();
+	    voidPopupDelete = new JMenuItem(HC.EDITOR_POPUP_DELETE);
+	    voidPopupDelete.addActionListener(new RemoveQuest());
+	    questPopup.add(voidPopupDelete);
+	    
+	    questList = new JList();
+	    questList.add(questPopup);
 	    
 
 

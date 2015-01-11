@@ -2,6 +2,7 @@ package GUIs;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Iterator;
 
 import gameCore.Game;
 import gameCore.GameWorld;
@@ -38,6 +39,13 @@ public class GameUI extends JFrame {
 		//this.updateRoomList();
 		//this.updateObjectList(editedRoom);
 		//this.updateVoidList();
+		/*
+		Iterator<Quest> itr = gw.quests.values().iterator();
+		Quest q = itr.next();
+		if (!q.started) {
+			q.startQuest();
+		}
+		*/
 		gw.checkActiveMissions();
 		RoomChart.setRoomChart(chartPane, gw.player.location, this);
 	}

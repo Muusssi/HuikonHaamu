@@ -4,9 +4,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import gameCore.GameWorld;
+import gameExceptions.CorruptedSaveLineException;
 import gameExceptions.IllegalGameCodeException;
 
-public class Mission {
+public class Mission extends UnInteractableThing{
 	
 	public GameWorld gw;
 	
@@ -20,7 +21,7 @@ public class Mission {
 	public boolean done = false;
 
 
-	public Mission(GameWorld gw, String name, String prolog, String epilog, Quest quest, String code)
+	public Mission(GameWorld gw, String name, String prolog, String epilog, String code, Quest quest)
 			throws IllegalGameCodeException {
 		this.gw = gw;
 		this.name = name;
@@ -30,7 +31,7 @@ public class Mission {
 		quest.addMission(this);
 		// Set the Mission code
 		if (code == null || code.equals("")) {
-			this.code = getNewMissionCode();
+			this.code = getNewCode();
 		} else if (gw.missions.containsKey(code)) {
 			throw new IllegalGameCodeException(code);
 		} else {
@@ -38,7 +39,7 @@ public class Mission {
 		}
 	}
 	
-	public String getNewMissionCode() {
+	public String getNewCode() {
 		int mCounter = 1;
 		while (gw.missions.containsKey(quest.code+"M"+Integer.toString(mCounter))) {
 			mCounter++;
@@ -65,6 +66,42 @@ public class Mission {
 		gw.addFinishedMission(this);
 		quest.advance();
 	}
+	
+	public String getEditorInfo() {
+		return this.code+": "+this.name+" -Mission in "+quest.code;
+	}
 
+	@Override
+	public void remove() {
+		// TODO not implemented
+		
+	}
+	
+	@Override
+	public String getSaveline() {
+		/* Mission::<name>::<code>::<prolog>::<epilog>
+		 * ::<quest> */
+		return "Mission::"+this.name+"::"+this.code+"::"+this.prolog+"::"+this.epilog+"::"+
+				this.quest.code+"::\r";
+	}
+	
+	/** Function for recreating a Quest from the line of text used to save it.*/
+	public static Mission loadLine(String saveLine, GameWorld gw) throws CorruptedSaveLineException {
+		if (saveLine.startsWith("Mission::")) {
+			String[] saveLineComp = saveLine.split("::");
+			Mission newMission;
+			try {
+				newMission = new Mission(gw, saveLineComp[1], saveLineComp[3], saveLineComp[4], saveLineComp[2],
+								gw.quests.get(saveLineComp[5]));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CorruptedSaveLineException(saveLine);
+			}
+			return newMission;
+		}
+		else {
+			throw new CorruptedSaveLineException(saveLine);
+		}
+	}
 
 }

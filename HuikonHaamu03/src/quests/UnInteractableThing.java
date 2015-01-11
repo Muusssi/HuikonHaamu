@@ -7,5 +7,9 @@ public abstract class UnInteractableThing {
 	}
 	
 	public abstract String getEditorInfo();
+	
+	public abstract void remove();
+	
+	public abstract String getSaveline();
 
 }
